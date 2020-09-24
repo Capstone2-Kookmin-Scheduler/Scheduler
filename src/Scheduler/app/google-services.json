@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1087909767622",
+    "firebase_url": "https://capstone-scheduler.firebaseio.com",
+    "project_id": "capstone-scheduler",
+    "storage_bucket": "capstone-scheduler.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1087909767622:android:7430b8d261330ebb606ac7",
+        "android_client_info": {
+          "package_name": "edu.capstone.scheduler"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1087909767622-d86hs78janj12rf72oe13bqfoi1cgh32.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4Vq7DiO8O-MuCqcbir54LU7xFXOkxQzw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1087909767622-d86hs78janj12rf72oe13bqfoi1cgh32.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
