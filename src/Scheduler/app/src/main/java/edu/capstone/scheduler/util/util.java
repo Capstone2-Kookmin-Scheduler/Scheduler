@@ -1,12 +1,18 @@
 package edu.capstone.scheduler.util;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import edu.capstone.scheduler.Activity.FirebaseAuthActivity;
 
 public class util {
     private static final String TAG = "util";
@@ -126,6 +132,13 @@ public class util {
             total = (byte) (ret | total);
         }
         return total;
+    }
+
+    public static void signOut(FirebaseAuth mAuth, Activity activity){
+        mAuth.getInstance().signOut();
+        Intent intent = new Intent(activity, FirebaseAuthActivity.class);
+        activity.startActivity(intent);
+        activity.finish();
     }
 
 }
