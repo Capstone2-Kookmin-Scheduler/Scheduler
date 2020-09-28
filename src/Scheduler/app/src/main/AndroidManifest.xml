@@ -12,16 +12,21 @@
             android:name=".Activity.LoadingActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
         </activity>
         <activity android:name=".Activity.FirebaseAuthActivity"/>
         <activity android:name=".Activity.SignupActivity"/>
 
         <activity android:name=".Activity.MainActivity"/>
+
+        <activity android:name=".Activity.CalendarActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
+        </activity>
     </application>
 
 
