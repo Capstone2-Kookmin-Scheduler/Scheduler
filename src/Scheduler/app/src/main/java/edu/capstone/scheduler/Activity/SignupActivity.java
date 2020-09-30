@@ -15,6 +15,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import edu.capstone.scheduler.R;
 
@@ -29,15 +35,18 @@ public class SignupActivity extends AppCompatActivity {
     private Button signupFinishBtn;
 
     private FirebaseAuth mAuth;
+    private FirebaseUser user;
+    private FirebaseDatabase database;
+    private DatabaseReference ref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        mAuth = FirebaseAuth.getInstance();
-        idEdit = (EditText)findViewById(R.id.id_signup);
 
+
+        idEdit = (EditText)findViewById(R.id.id_signup);
         pwEdit = (EditText)findViewById(R.id.pw_signup);
         pwEdit.setFilters(new InputFilter[]{filterAlphaNum});
 
@@ -50,12 +59,18 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
     private void createUser(String email, String password){
+        mAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        ref = database.getReference("User/");
+
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
                             Toast.makeText(SignupActivity.this, "회원가입 성공", Toast.LENGTH_SHORT).show();
+                            user = mAuth.getCurrentUser();
+                            ref.child(user.getUid()).setValue(user.getEmail());
                             SignupActivity.this.finish();
                         }
                         else{
