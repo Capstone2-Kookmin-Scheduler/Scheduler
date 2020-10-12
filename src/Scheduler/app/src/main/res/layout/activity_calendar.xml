@@ -2,28 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/color_ffffff" >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+        android:id="@+id/calenarView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        mcv_selectionColor="#00F"
+        app:mcv_showOtherDates="all"/>
 
     <TextView
-        android:id="@+id/tv_date"
+        android:id="@+id/textView"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/color_21a4ff"
-        android:gravity="center_vertical"
-        android:paddingLeft="10dp"
-        android:textColor="@color/color_ffffff"
-        android:textSize="20sp" />
+        android:layout_height="wrap_content"
+        android:text="TextView"/>
 
-    <GridView
-        android:layout_marginTop="10dp"
-        android:id="@+id/gridview"
-        android:layout_weight="1"
-        android:layout_height="0dp"
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_weight="4"
         android:layout_width="match_parent"
-        android:numColumns="7"
-        android:listSelector="@color/transparent"
-        >
-    </GridView>
+        android:layout_height="match_parent"
+        android:background="#00FFFFFF"/>
 
 </LinearLayout>
