@@ -20,10 +20,10 @@
         android:textSize="30dp"/>
 
     <Button
-        android:id="@+id/buttonReturn"
+        android:id="@+id/find_bus"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="go back"
+        android:text="Find Bus"
         />
 
 
