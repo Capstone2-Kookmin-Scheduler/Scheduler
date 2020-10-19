@@ -22,6 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import edu.capstone.scheduler.Object.User;
 import edu.capstone.scheduler.R;
 
 import static edu.capstone.scheduler.util.textFilter.*;
@@ -35,7 +36,7 @@ public class SignupActivity extends AppCompatActivity {
     private Button signupFinishBtn;
 
     private FirebaseAuth mAuth;
-    private FirebaseUser user;
+    private FirebaseUser mUser;
     private FirebaseDatabase database;
     private DatabaseReference ref;
 
@@ -62,6 +63,9 @@ public class SignupActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         ref = database.getReference("User/");
+        final User user = new User();
+        user.setEmail(email);
+        user.setLateCount(0);
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -69,8 +73,8 @@ public class SignupActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
                             Toast.makeText(SignupActivity.this, "회원가입 성공", Toast.LENGTH_SHORT).show();
-                            user = mAuth.getCurrentUser();
-                            ref.child(user.getUid()).setValue(user.getEmail());
+                            mUser = mAuth.getCurrentUser();
+                            ref.child(mUser.getUid()).updateChildren(user.toMap());
                             SignupActivity.this.finish();
                         }
                         else{
