@@ -1,4 +1,4 @@
-package edu.capstone.scheduler;
+package edu.capstone.scheduler.Object;
 
 import com.google.firebase.database.Exclude;
 
@@ -9,6 +9,7 @@ public class User {
     private String email;
     private int lateCount;
 
+    public User(){}
     public String getEmail() {
         return email;
     }

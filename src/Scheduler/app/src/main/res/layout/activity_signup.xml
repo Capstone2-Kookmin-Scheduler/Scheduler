@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text = "ID  "/>
+        <EditText
+            android:id="@+id/id_signup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="ID 입력(email)"
+            android:inputType="textWebEmailAddress"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text = "PW  "/>
+        <EditText
+            android:id="@+id/pw_signup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="비밀번호 입력(최소 6자리)"
+            android:inputType="textPassword"
+            android:maxLines="1"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text = "이름  "/>
+        <EditText
+            android:id="@+id/name_signup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="이름 입력"
+            android:inputType="text"
+            android:maxLines="1"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/signupFinishBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="확인">
+    </Button>
+
+</LinearLayout>

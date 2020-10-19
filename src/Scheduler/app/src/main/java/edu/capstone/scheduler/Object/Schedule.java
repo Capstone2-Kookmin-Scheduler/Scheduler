@@ -1,4 +1,4 @@
-package edu.capstone.scheduler;
+package edu.capstone.scheduler.Object;
 
 import com.google.firebase.database.Exclude;
 
@@ -16,6 +16,7 @@ public class Schedule {
     private String arrival_location;
     private int total_time;
 
+    public Schedule(){    }
     public Schedule(String name, Date date, Double departure_lat, Double departure_lng, Double arrival_lat, Double arrival_lng, String departure_location, String arrival_location, int total_time){
         this.name = name;
         this.date = date;
@@ -37,6 +38,9 @@ public class Schedule {
         result.put("departure_lng",departure_lng);
         result.put("arrival_lat",arrival_lat);
         result.put("arrival_lng",arrival_lng);
+        result.put("departure_location",departure_location);
+        result.put("arrival_location",arrival_location);
+        result.put("total_time",total_time);
 
         return result;
     }

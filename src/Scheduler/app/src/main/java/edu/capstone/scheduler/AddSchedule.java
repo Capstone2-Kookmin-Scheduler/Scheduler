@@ -3,7 +3,11 @@ package edu.capstone.scheduler;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -20,6 +24,10 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.odsay.odsayandroidsdk.API;
 import com.odsay.odsayandroidsdk.ODsayData;
 import com.odsay.odsayandroidsdk.ODsayService;
@@ -28,10 +36,12 @@ import com.odsay.odsayandroidsdk.OnResultCallbackListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.sql.Time;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
-import edu.capstone.scheduler.*;
+
+import edu.capstone.scheduler.Object.Date;
+import edu.capstone.scheduler.Object.Schedule;
 
 public class AddSchedule extends AppCompatActivity {
     private EditText schedule_name, arrival_location, departure_location;
@@ -42,7 +52,8 @@ public class AddSchedule extends AppCompatActivity {
     private String departure_placeName, arrival_placeName;
     private int year, month, day, hour, minute;
     private int estimated_time, total_time;
-
+    private Schedule schedule;
+    private AlarmManager alarmManager;
 
     private static int AUTOCOMPLETE_REQUEST_CODE_DEPARTURE = 1;
     private static int AUTOCOMPLETE_REQUEST_CODE_ARRIVAL = 2;
@@ -50,10 +61,23 @@ public class AddSchedule extends AppCompatActivity {
 
     Handler handler = new Handler();
 
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private FirebaseUser mUser;
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference ref;
+
+    DatePicker.OnDateChangedListener dateChangedListener = new DatePicker.OnDateChangedListener() {
+        @Override
+        public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
+            year = i; month= i1; day = i2;
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_schedule);
+        mUser = mAuth.getCurrentUser();
 
         schedule_name = (EditText) findViewById(R.id.schedule_name);
         arrival_location = (EditText) findViewById(R.id.arrival_location);
@@ -67,9 +91,16 @@ public class AddSchedule extends AppCompatActivity {
 
         Places.initialize(getApplicationContext(), "AIzaSyCG6NeTZ9cdyvFoz_tNIsBHMJmfCKw1vl0");
         PlacesClient placesClient = Places.createClient(this);
+        datePicker.init(2020,10,19,dateChangedListener);
 
-        year = datePicker.getYear(); month = datePicker.getMonth(); day = datePicker.getDayOfMonth();
-        hour = timePicker.getHour(); minute = timePicker.getMinute();
+        timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+            @Override
+            public void onTimeChanged(TimePicker timePicker, int i, int i1) {
+                hour = i; minute = i1;
+            }
+        });
+
+
 
         // timePicker.setHour()
         //  datePicker.updateDate()
@@ -103,11 +134,15 @@ public class AddSchedule extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Date date = new Date(year, month, day, hour, minute);
-                Schedule schedule = new Schedule(schedule_name.getText().toString(), date, departure_lat, departure_lng, arrival_lat, arrival_lng, departure_placeName, arrival_placeName, 0);
+                schedule = new Schedule(schedule_name.getText().toString(), date, departure_lat, departure_lng, arrival_lat, arrival_lng, departure_placeName, arrival_placeName, 0);
                 //calculate_time(departure_lng, departure_lat, arrival_lng, arrival_lat);
                 schedule.setTotal_time(total_time);
-                
+                String dateStr = Integer.toString(date.getYear())+String.format("%02d",date.getMonth())+String.format("%02d",date.getDay());
 
+                ref = database.getReference("Schedule/").child(mUser.getUid()).child(dateStr).child(schedule.getName());
+                ref.updateChildren(schedule.toMap());
+
+                regist(v);
 
                 Log.i("날짜", Integer.toString(year)+Integer.toString(month) + Integer.toString(day));
                 Log.i("시간", Integer.toString(hour) + Integer.toString(minute));
@@ -196,8 +231,42 @@ public class AddSchedule extends AppCompatActivity {
         odsayService.requestSearchPubTransPath(departure_lng.toString(), departure_lat.toString(), arrival_lng.toString(), arrival_lat.toString(), "0", "0", "0", onResultCallbackListener);
 
 
-    }
+    } // end of Calculate
 
+
+    public void regist(View view) {
+        alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(AddSchedule.this, CheckLocation.class);
+        intent.putExtra("arrival_lat", arrival_lat);
+        intent.putExtra("arrival_lng", arrival_lng);
+        intent.putExtra("hour", hour);
+        intent.putExtra("minute", minute);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(AddSchedule.this, 0, intent, 0);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            //hour = timePicker.getHour();
+            //minute = timePicker.getMinute();
+        }
+
+        /**
+         * TODO : 한시간 전 실행 아님, 약속시간 - 소요시간 - 한시간
+         */
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hour-1); //  한시간 전 실행
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        Log.d("call alarmManger", " ttttttttttttttttttttttttttt");
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+    } // end of regist
+
+    public void unregist(View view) {
+        Intent intent = new Intent(AddSchedule.this, CheckLocation.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+        alarmManager.cancel(pendingIntent);
+    } //unRegist
 
 
 

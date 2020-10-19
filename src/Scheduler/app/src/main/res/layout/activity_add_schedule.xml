@@ -5,14 +5,6 @@
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <TextView
-        android:id="@+id/text"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="일정 추가"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="70dp"
@@ -116,21 +108,13 @@
         android:id="@+id/test"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="30dp"
         android:text="test"/>
 
     <Button
         android:id="@+id/add_schedule"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="30dp"
-        android:text="등록"/>
-
-
-
-
-
-
+        android:text="등록" />
 
 
 </LinearLayout>

@@ -1,4 +1,4 @@
-package edu.capstone.scheduler;
+package edu.capstone.scheduler.Object;
 
 public class Date {
     private int year;
@@ -7,6 +7,7 @@ public class Date {
     private int hour;
     private int minute;
 
+    public Date(){}
     public Date(int year, int month, int day, int hour, int minute) {
         this.year = year; this.month = month; this.day = day; this.hour = hour; this.minute = minute;
     }
