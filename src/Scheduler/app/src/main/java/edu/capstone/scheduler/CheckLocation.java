@@ -1,10 +1,13 @@
 package edu.capstone.scheduler;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.odsay.odsayandroidsdk.API;
 import com.odsay.odsayandroidsdk.ODsayData;
@@ -18,11 +21,13 @@ import edu.capstone.scheduler.AlarmActivity;
 
 public class CheckLocation extends BroadcastReceiver {
     GpsTracker gpsTracker;
+    NotificationManager notificationManager;
     private Double lat, lng, arrival_lat, arrival_lng;
     private int late_count, late_time;
     private int hour, minute;
     private int total_time;
 
+    Notification notification = new Notification();
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -43,6 +48,9 @@ public class CheckLocation extends BroadcastReceiver {
         Log.d("시간체크","hour : "+ hour+" minute : "+minute);
         calculateTotalTime(lat, lng, arrival_lat, arrival_lng, hour, minute, odsayService);
 
+
+
+
     } //end of onReceive
 
 
@@ -52,8 +60,12 @@ public class CheckLocation extends BroadcastReceiver {
         }
         else return false;
     }
-
+    public int getTotal_time(){
+        return this.total_time;
+    }
     public void calculateTotalTime (Double lat, Double lng, Double arrival_lat, Double arrival_lng, int hour, int minute,  ODsayService odsayService) {
+
+
         OnResultCallbackListener onResultCallbackListener = new OnResultCallbackListener() {
             @Override
             public void onSuccess(ODsayData odsayData, API api) {
@@ -63,6 +75,7 @@ public class CheckLocation extends BroadcastReceiver {
                         total_time = jsonArray.getJSONObject(1).getJSONObject("info").getInt("totalTime");
                         Log.i("예상 소요시간 ", Integer.toString(total_time));
                         Log.i("출발 시간 : " , calculateDepartureTime(hour, minute, total_time));
+                        notification.show_notification(Integer.toString(total_time));
 
                     } catch (JSONException e) {
                         e.printStackTrace();

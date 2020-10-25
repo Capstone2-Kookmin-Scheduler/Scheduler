@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -66,12 +67,12 @@ public class AddSchedule extends AppCompatActivity {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref;
 
-    DatePicker.OnDateChangedListener dateChangedListener = new DatePicker.OnDateChangedListener() {
-        @Override
-        public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
-            year = i; month= i1; day = i2;
-        }
-    };
+//    DatePicker.OnDateChangedListener dateChangedListener = new DatePicker.OnDateChangedListener() {
+//        @Override
+//        public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
+//            year = i; month= i1; day = i2;
+//        }
+//    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +92,15 @@ public class AddSchedule extends AppCompatActivity {
 
         Places.initialize(getApplicationContext(), "AIzaSyCG6NeTZ9cdyvFoz_tNIsBHMJmfCKw1vl0");
         PlacesClient placesClient = Places.createClient(this);
-        datePicker.init(2020,10,19,dateChangedListener);
+
+        //datePicker.init(2020,10,19,dateChangedListener);
+
+        datePicker.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
+            @Override
+            public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
+                year = i; month = i1; day = i2;
+            }
+        });
 
         timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
             @Override
@@ -99,7 +108,6 @@ public class AddSchedule extends AppCompatActivity {
                 hour = i; minute = i1;
             }
         });
-
 
 
         // timePicker.setHour()
@@ -139,15 +147,17 @@ public class AddSchedule extends AppCompatActivity {
                 schedule.setTotal_time(total_time);
                 String dateStr = Integer.toString(date.getYear())+String.format("%02d",date.getMonth())+String.format("%02d",date.getDay());
 
-                ref = database.getReference("Schedule/").child(mUser.getUid()).child(dateStr).child(schedule.getName());
-                ref.updateChildren(schedule.toMap());
-
-                regist(v);
-
                 Log.i("날짜", Integer.toString(year)+Integer.toString(month) + Integer.toString(day));
                 Log.i("시간", Integer.toString(hour) + Integer.toString(minute));
                 Log.i("장소", departure_placeName+arrival_placeName);
                 Log.i("소요시간", Integer.toString(total_time));
+
+                //ref = database.getReference("Schedule/").child(mUser.getUid()).child(dateStr).child(schedule.getName());
+                //ref.updateChildren(schedule.toMap());
+
+                regist(v);
+
+
             }
         });
 

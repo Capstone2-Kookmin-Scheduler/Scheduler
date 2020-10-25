@@ -162,7 +162,20 @@ public class SearchActivity extends AppCompatActivity {
     }
 
 
-
+    private void directionsAPI(Double departure_lat, Double departure_lng, Double arrival_lat, Double arrival_lng) {
+        String origin      = departure_lat.toString()+ "," + departure_lng.toString();
+        String destination = arrival_lat.toString() + "," + arrival_lng.toString();
+        String mode = "transit";
+        String departure_time = "now";
+        String lang = "ko";
+        String key = "AIzaSyCG6NeTZ9cdyvFoz_tNIsBHMJmfCKw1vl0";
+        String str = "https://maps.googleapis.com/maps/api/directions/json?origin=" + origin +
+                      "&destination=" + destination +
+                      "&mode=" + mode +
+                      "&departure_time=" + departure_time +
+                      "&language=" + lang +
+                      "&key=" + key;
+    }
 
 
 
