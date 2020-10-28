@@ -27,7 +27,7 @@ public class CheckLocation extends BroadcastReceiver {
     private int hour, minute;
     private int total_time;
 
-    Notification notification = new Notification();
+    //Notification notification = new Notification();
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -40,11 +40,10 @@ public class CheckLocation extends BroadcastReceiver {
         odsayService.setReadTimeout(5000);
         odsayService.setConnectionTimeout(5000);
 
-        Log.e("Alarm", "Alarm");
         gpsTracker = new GpsTracker(context);
         lat = gpsTracker.getLat();
         lng = gpsTracker.getLng();
-        Log.d("위도 경도 ", lat.toString() + lng.toString());
+        Log.d("위도 경도 ", lat.toString() + " " + lng.toString());
         Log.d("시간체크","hour : "+ hour+" minute : "+minute);
         calculateTotalTime(lat, lng, arrival_lat, arrival_lng, hour, minute, odsayService);
 
@@ -75,7 +74,7 @@ public class CheckLocation extends BroadcastReceiver {
                         total_time = jsonArray.getJSONObject(1).getJSONObject("info").getInt("totalTime");
                         Log.i("예상 소요시간 ", Integer.toString(total_time));
                         Log.i("출발 시간 : " , calculateDepartureTime(hour, minute, total_time));
-                        notification.show_notification(Integer.toString(total_time));
+                        //notification.show_notification(Integer.toString(total_time));
 
                     } catch (JSONException e) {
                         e.printStackTrace();

@@ -268,8 +268,9 @@ public class AddSchedule extends AppCompatActivity {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
-        Log.d("call alarmManger", " ttttttttttttttttttttttttttt");
+
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+        Log.d("call alarmManger", " ttttttttttttttttttttttttttt");
     } // end of regist
 
     public void unregist(View view) {

@@ -1,11 +1,14 @@
 package edu.capstone.scheduler;
 
+import android.content.AsyncQueryHandler;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.PrecomputedText;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -119,6 +122,18 @@ public class buttonTest extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+
+//    class temp extends AsyncTask{
+//        @Override
+//        protected Object doInBackground(Object[] objects) {
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute() {
+//            super.onPostExecute();
+//        }
+//    }
 
 
 

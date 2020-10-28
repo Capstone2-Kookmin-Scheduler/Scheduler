@@ -20,25 +20,25 @@ public class Notification extends AppCompatActivity {
     NotificationManager notificationManager;
     NotificationCompat.Builder builder;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, String name) {
-        super.onCreate(savedInstanceState);
+//    @Override
+//    public void onCreate(@Nullable Bundle savedInstanceState, String name) {
+//        super.onCreate(savedInstanceState);
+//
+//        builder = null;
+//        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//        notificationManager.createNotificationChannel( new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT) );
+//        builder = new NotificationCompat.Builder(this, CHANNEL_ID);
+//
+//        builder.setContentTitle("알림");
+//        builder.setContentText(name);
+//
+//    }
 
-        builder = null;
-        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.createNotificationChannel( new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT) );
-        builder = new NotificationCompat.Builder(this, CHANNEL_ID);
-
-        builder.setContentTitle("알림");
-        builder.setContentText(name);
-
-    }
-
-    public void show_notification(String name) {
-        onCreate(null, name);
-
-
-    } // end of show_notification
+//    public void show_notification(String name) {
+//        onCreate(null, name);
+//
+//
+//    } // end of show_notification
 
 
 
