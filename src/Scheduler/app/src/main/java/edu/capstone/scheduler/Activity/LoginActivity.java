@@ -64,6 +64,10 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         * Todo 비밀번호 *로 숨기기
+         */
+
     }
 
     private void login_email(String email, String password){

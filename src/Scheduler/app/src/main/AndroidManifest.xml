@@ -37,28 +37,8 @@
         <activity android:name=".Activity.SignupActivity"/>
         <activity android:name=".Activity.TestActivity"/>
         <activity android:name=".MainActivity"/>
-        <activity android:name=".SearchActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".buttonTest">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".buttonSecond">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".AlarmActivity">
+        <activity android:name=".Activity.AddSchedule">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -66,15 +46,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".AddSchedule">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <receiver android:name=".CheckLocation" />
+        <receiver android:name=".util.CheckLocation" />
     </application>
 
 </manifest>

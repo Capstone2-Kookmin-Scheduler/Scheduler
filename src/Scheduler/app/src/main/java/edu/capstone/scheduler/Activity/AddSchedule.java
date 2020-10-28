@@ -1,13 +1,9 @@
-package edu.capstone.scheduler;
+package edu.capstone.scheduler.Activity;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
 
 import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -44,8 +40,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import edu.capstone.scheduler.util.CheckLocation;
 import edu.capstone.scheduler.Object.Date;
 import edu.capstone.scheduler.Object.Schedule;
+import edu.capstone.scheduler.R;
 
 public class AddSchedule extends AppCompatActivity {
     private EditText schedule_name, arrival_location, departure_location;
@@ -150,8 +148,8 @@ public class AddSchedule extends AppCompatActivity {
                 Log.i("장소", departure_placeName+arrival_placeName);
                 Log.i("소요시간", Integer.toString(total_time));
 
-                //ref = database.getReference("Schedule/").child(mUser.getUid()).child(dateStr).child(schedule.getName());
-                //ref.updateChildren(schedule.toMap());
+                ref = database.getReference("Schedule/").child(mUser.getUid()).child(dateStr).child(schedule.getName());
+                ref.updateChildren(schedule.toMap());
 
                 regist(v);
 

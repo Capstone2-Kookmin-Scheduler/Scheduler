@@ -1,4 +1,4 @@
-package edu.capstone.scheduler;
+package edu.capstone.scheduler.util;
 
 import android.Manifest;
 import android.app.Service;

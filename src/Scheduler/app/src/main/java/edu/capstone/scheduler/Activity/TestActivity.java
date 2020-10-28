@@ -17,9 +17,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import edu.capstone.scheduler.AddSchedule;
 import edu.capstone.scheduler.Object.Schedule;
 import edu.capstone.scheduler.R;
 import edu.capstone.scheduler.util.util;

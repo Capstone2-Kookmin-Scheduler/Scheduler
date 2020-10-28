@@ -1,4 +1,4 @@
-package edu.capstone.scheduler;
+package edu.capstone.scheduler.util;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -7,9 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
 import com.odsay.odsayandroidsdk.API;
@@ -20,8 +18,7 @@ import com.odsay.odsayandroidsdk.OnResultCallbackListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import edu.capstone.scheduler.AlarmActivity;
-import edu.capstone.scheduler.Object.Schedule;
+import edu.capstone.scheduler.R;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
@@ -85,7 +82,7 @@ public class CheckLocation extends BroadcastReceiver {
                         JSONArray jsonArray = odsayData.getJson().getJSONObject("result").getJSONArray("path");
                         total_time = jsonArray.getJSONObject(1).getJSONObject("info").getInt("totalTime");
                         Log.i("예상 소요시간 ", Integer.toString(total_time));
-                        Log.i("출발 시간 : " , calculateDepartureTime(hour, minute, total_time));
+                        Log.i("출발 시간  " , calculateDepartureTime(hour, minute, total_time));
 
                         noti(mContext,schedule_name,total_time,arrival_location);
                         notifi(notificationManager,noti);
