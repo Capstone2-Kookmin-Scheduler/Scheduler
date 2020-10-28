@@ -1,5 +1,7 @@
 package edu.capstone.scheduler;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,6 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
 import com.odsay.odsayandroidsdk.API;
 import com.odsay.odsayandroidsdk.ODsayData;
@@ -18,23 +21,33 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import edu.capstone.scheduler.AlarmActivity;
+import edu.capstone.scheduler.Object.Schedule;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class CheckLocation extends BroadcastReceiver {
     GpsTracker gpsTracker;
-    NotificationManager notificationManager;
     private Double lat, lng, arrival_lat, arrival_lng;
     private int late_count, late_time;
     private int hour, minute;
     private int total_time;
+    private String schedule_name;
+    private String arrival_location;
 
-    //Notification notification = new Notification();
+    private NotificationManager notificationManager;
+    private Notification noti;
+    private NotificationChannel notificationChannel;
+    private Context mContext;
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        mContext = context;
         arrival_lat = intent.getExtras().getDouble("arrival_lat");
         arrival_lng = intent.getExtras().getDouble("arrival_lng");
         hour = intent.getExtras().getInt("hour");
         minute = intent.getExtras().getInt("minute");
+        schedule_name = intent.getStringExtra("schedule_name");
+        arrival_location = intent.getStringExtra("arrival_location");
 
         ODsayService odsayService = ODsayService.init(context,"suLGma46yOIqhKYbRFlIXAWLeDWumTQqfmY0RJ+ZnvE");
         odsayService.setReadTimeout(5000);
@@ -46,7 +59,6 @@ public class CheckLocation extends BroadcastReceiver {
         Log.d("위도 경도 ", lat.toString() + " " + lng.toString());
         Log.d("시간체크","hour : "+ hour+" minute : "+minute);
         calculateTotalTime(lat, lng, arrival_lat, arrival_lng, hour, minute, odsayService);
-
 
 
 
@@ -74,8 +86,9 @@ public class CheckLocation extends BroadcastReceiver {
                         total_time = jsonArray.getJSONObject(1).getJSONObject("info").getInt("totalTime");
                         Log.i("예상 소요시간 ", Integer.toString(total_time));
                         Log.i("출발 시간 : " , calculateDepartureTime(hour, minute, total_time));
-                        //notification.show_notification(Integer.toString(total_time));
 
+                        noti(mContext,schedule_name,total_time,arrival_location);
+                        notifi(notificationManager,noti);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -104,8 +117,29 @@ public class CheckLocation extends BroadcastReceiver {
 
         return (h + " : " + m);
     }
+    public void noti(Context context, String schedule_name, int total_time, String arrival_location){
+        notificationManager = (NotificationManager)context.getSystemService(NOTIFICATION_SERVICE);
+        notificationChannel = new NotificationChannel("noti_channel", "channel", NotificationManager.IMPORTANCE_DEFAULT);
+        notificationChannel.setDescription("알림 테스트");
+        notificationManager.createNotificationChannel(notificationChannel);
 
+        String time = Integer.toString(total_time) + "분";
 
+        noti = new NotificationCompat.Builder(context, "noti_channel")
+                .setDefaults(Notification.DEFAULT_LIGHTS)
+                .setContentTitle(schedule_name)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentText("도착지 : "+ arrival_location + "\n예상소요시간 : " + time)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .build();
+
+    }
+
+    public void notifi(NotificationManager ntm, Notification noti){
+        Log.e("알림 확인","notifi");
+        ntm.notify(1234,noti);
+    }
 } // end of CheckLocation
 
 

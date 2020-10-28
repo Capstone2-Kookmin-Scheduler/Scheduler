@@ -2,8 +2,11 @@ package edu.capstone.scheduler;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -67,12 +70,7 @@ public class AddSchedule extends AppCompatActivity {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref;
 
-//    DatePicker.OnDateChangedListener dateChangedListener = new DatePicker.OnDateChangedListener() {
-//        @Override
-//        public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
-//            year = i; month= i1; day = i2;
-//        }
-//    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -245,6 +243,7 @@ public class AddSchedule extends AppCompatActivity {
 
 
     public void regist(View view) {
+
         alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 
         Intent intent = new Intent(AddSchedule.this, CheckLocation.class);
@@ -252,6 +251,8 @@ public class AddSchedule extends AppCompatActivity {
         intent.putExtra("arrival_lng", arrival_lng);
         intent.putExtra("hour", hour);
         intent.putExtra("minute", minute);
+        intent.putExtra("schedule_name", schedule_name.getText().toString());
+        intent.putExtra("arrival_location",arrival_placeName);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(AddSchedule.this, 0, intent, 0);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
@@ -278,6 +279,9 @@ public class AddSchedule extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
         alarmManager.cancel(pendingIntent);
     } //unRegist
+
+
+
 
 
 
