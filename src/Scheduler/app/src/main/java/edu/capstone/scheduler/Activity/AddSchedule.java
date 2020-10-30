@@ -36,9 +36,11 @@ import com.odsay.odsayandroidsdk.OnResultCallbackListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import edu.capstone.scheduler.util.CheckLocation;
 import edu.capstone.scheduler.Object.Date;
@@ -56,6 +58,7 @@ public class AddSchedule extends AppCompatActivity {
     private int estimated_time, total_time;
     private Schedule schedule;
     private AlarmManager alarmManager;
+    private int count = 0;
 
     private static int AUTOCOMPLETE_REQUEST_CODE_DEPARTURE = 1;
     private static int AUTOCOMPLETE_REQUEST_CODE_ARRIVAL = 2;
@@ -89,12 +92,25 @@ public class AddSchedule extends AppCompatActivity {
         Places.initialize(getApplicationContext(), "AIzaSyCG6NeTZ9cdyvFoz_tNIsBHMJmfCKw1vl0");
         PlacesClient placesClient = Places.createClient(this);
 
-        //datePicker.init(2020,10,19,dateChangedListener);
+        // initialize currentDate
+        java.util.Date currentTime = new java.util.Date();
+        SimpleDateFormat format_year = new SimpleDateFormat("yyyy");
+        SimpleDateFormat format_month = new SimpleDateFormat("MM");
+        SimpleDateFormat format_day = new SimpleDateFormat("dd");
+        SimpleDateFormat format_hour = new SimpleDateFormat("HH");
+        SimpleDateFormat format_minute = new SimpleDateFormat("mm");
 
-        datePicker.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
+        String str_year = format_year.format(currentTime); year = Integer.parseInt(str_year);
+        String str_month = format_month.format(currentTime); month = Integer.parseInt(str_month);
+        String str_day = format_day.format(currentTime); day = Integer.parseInt(str_day);
+        String str_hour = format_hour.format(currentTime); hour = Integer.parseInt(str_hour);
+        String str_minute = format_minute.format(currentTime); minute = Integer.parseInt(str_minute);
+
+        //set datePicker and timePicker
+        datePicker.init(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(), new DatePicker.OnDateChangedListener() {
             @Override
-            public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
-                year = i; month = i1; day = i2;
+            public void onDateChanged(DatePicker i, int i1, int i2, int i3) {
+                datePicker = i; year = i1; month = i2+1; day = i3;
             }
         });
 
@@ -105,10 +121,7 @@ public class AddSchedule extends AppCompatActivity {
             }
         });
 
-
-        // timePicker.setHour()
-        //  datePicker.updateDate()
-
+        // set location
         search_departure_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -151,7 +164,7 @@ public class AddSchedule extends AppCompatActivity {
                 ref = database.getReference("Schedule/").child(mUser.getUid()).child(dateStr).child(schedule.getName());
                 ref.updateChildren(schedule.toMap());
 
-                regist(v);
+                regist(v, schedule_name.getText().toString());
 
 
             }
@@ -240,8 +253,8 @@ public class AddSchedule extends AppCompatActivity {
     } // end of Calculate
 
 
-    public void regist(View view) {
-
+    public void regist(View view, String str) {
+        count++;
         alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 
         Intent intent = new Intent(AddSchedule.this, CheckLocation.class);
@@ -251,7 +264,7 @@ public class AddSchedule extends AppCompatActivity {
         intent.putExtra("minute", minute);
         intent.putExtra("schedule_name", schedule_name.getText().toString());
         intent.putExtra("arrival_location",arrival_placeName);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(AddSchedule.this, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(AddSchedule.this, count, intent, 0);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             //hour = timePicker.getHour();
@@ -269,12 +282,12 @@ public class AddSchedule extends AppCompatActivity {
 
 
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
-        Log.d("call alarmManger", " ttttttttttttttttttttttttttt");
+        Log.d("call alarmManger", "channel " + count);
     } // end of regist
 
     public void unregist(View view) {
         Intent intent = new Intent(AddSchedule.this, CheckLocation.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, count, intent, 0);
         alarmManager.cancel(pendingIntent);
     } //unRegist
 

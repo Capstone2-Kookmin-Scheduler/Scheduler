@@ -85,7 +85,7 @@ public class CheckLocation extends BroadcastReceiver {
                         Log.i("출발 시간  " , calculateDepartureTime(hour, minute, total_time));
 
                         noti(mContext,schedule_name,total_time,arrival_location);
-                        notifi(notificationManager,noti);
+                        notifi(notificationManager,noti, minute);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -116,7 +116,7 @@ public class CheckLocation extends BroadcastReceiver {
     }
     public void noti(Context context, String schedule_name, int total_time, String arrival_location){
         notificationManager = (NotificationManager)context.getSystemService(NOTIFICATION_SERVICE);
-        notificationChannel = new NotificationChannel("noti_channel", "channel", NotificationManager.IMPORTANCE_DEFAULT);
+        notificationChannel = new NotificationChannel(schedule_name, "channel", NotificationManager.IMPORTANCE_DEFAULT);
         notificationChannel.setDescription("알림 테스트");
         notificationManager.createNotificationChannel(notificationChannel);
 
@@ -133,9 +133,9 @@ public class CheckLocation extends BroadcastReceiver {
 
     }
 
-    public void notifi(NotificationManager ntm, Notification noti){
+    public void notifi(NotificationManager ntm, Notification noti, int channel){
         Log.e("알림 확인","notifi");
-        ntm.notify(1234,noti);
+        ntm.notify(channel,noti);
     }
 } // end of CheckLocation
 
