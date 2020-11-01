@@ -31,7 +31,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
         holder.textView1.setText(list.get(position).getName());
-        holder.textView2.setText(list.get(position).getTotal_time());
+        holder.textView2.setText(Integer.toString(list.get(position).getTotal_time()));
         holder.textView3.setText(list.get(position).getArrival_location());
     }
 
@@ -50,7 +50,6 @@ class RecyclerViewHolder extends RecyclerView.ViewHolder{
 
     public RecyclerViewHolder(@NonNull View itemView) {
         super(itemView);
-
         textView1 = itemView.findViewById(R.id.textView1);
         textView2 = itemView.findViewById(R.id.textView2);
         textView3 = itemView.findViewById(R.id.textView3);

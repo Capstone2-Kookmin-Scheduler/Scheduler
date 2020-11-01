@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -36,6 +38,7 @@ public class showList extends AppCompatActivity {
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser mUser;
 
+    private MainAdapter mainAdapter;
     RecyclerView recyclerView;
     List<Schedule> list = new ArrayList<>();
 
@@ -44,11 +47,21 @@ public class showList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_list);
 
+        mUser = mAuth.getCurrentUser();
         recyclerView = findViewById(R.id.rv);
-        //getUid() 로 수정
-        ref = database.getReference("Schedule").child("GKpIy9pD9SQsJvRPMMRsa6qqQPg2");
+        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(manager);
+        recyclerView.setHasFixedSize(false);
+        mainAdapter = new MainAdapter(list);
+        recyclerView.setAdapter(mainAdapter);
 
-        ref.child("20201030").addValueEventListener(new ValueEventListener() {
+        //getUid() 로 수정
+        ref = database.getReference("Schedule").child(mUser.getUid());
+        /**
+         * Todo child이벤트리스너로 변경
+         */
+
+        ref.child("20201101").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 list.clear();
@@ -56,8 +69,8 @@ public class showList extends AppCompatActivity {
                 for(DataSnapshot item : snapshot.getChildren()) {
                     Schedule schedule = item.getValue(Schedule.class);
                     list.add(schedule);
+                    mainAdapter.notifyDataSetChanged();
                 }
-
             }
 
             @Override
@@ -66,10 +79,6 @@ public class showList extends AppCompatActivity {
             }
         });
 
-        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(manager);
-        recyclerView.setHasFixedSize(false);
-        recyclerView.setAdapter(new MainAdapter(list));
 
 
     } // end of onCreate

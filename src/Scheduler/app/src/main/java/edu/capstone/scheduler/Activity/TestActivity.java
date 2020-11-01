@@ -20,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import edu.capstone.scheduler.Object.Schedule;
 import edu.capstone.scheduler.R;
+import edu.capstone.scheduler.showList;
 import edu.capstone.scheduler.util.util;
 
 public class TestActivity extends AppCompatActivity {
@@ -44,7 +45,7 @@ public class TestActivity extends AppCompatActivity {
         add_schedule_BTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), AddSchedule.class);
+                Intent intent = new Intent(getApplicationContext(), showList.class);
                 startActivity(intent);
             }
         });
