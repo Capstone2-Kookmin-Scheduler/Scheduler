@@ -2,6 +2,7 @@ package edu.capstone.scheduler.Activity;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
@@ -28,6 +29,7 @@ public class EventDecorator implements DayViewDecorator {
         drawable = context.getResources().getDrawable(R.drawable.more,null);
         this.color = color;
         this.dates = new HashSet<>(dates);
+        Log.e("이벤트","는"+dates.size());
     }
 
     @Override
@@ -37,6 +39,7 @@ public class EventDecorator implements DayViewDecorator {
 
     @Override
     public void decorate(DayViewFacade view) {
+        Log.e("EventDecorate","decorate");
         //view.setSelectionDrawable(drawable); // 테두리
         view.addSpan(new DotSpan(5, color)); // 날자밑에 점
     }

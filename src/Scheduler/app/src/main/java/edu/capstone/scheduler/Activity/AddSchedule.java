@@ -18,6 +18,7 @@ import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -134,7 +135,17 @@ public class AddSchedule extends AppCompatActivity {
 
     }
 
-//    public void regist(View view) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==1234){
+            if(resultCode==RESULT_OK){
+
+            }
+        }
+
+    }
+    //    public void regist(View view) {
 //        alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 //
 //        Intent intent = new Intent(AddSchedule.this, CheckLocation.class);

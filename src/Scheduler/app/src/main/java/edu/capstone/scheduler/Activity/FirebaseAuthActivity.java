@@ -102,7 +102,7 @@ public class FirebaseAuthActivity extends AppCompatActivity {
 
     private void updateUI(FirebaseUser user){
         if(user!=null){
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, CalendarActivity.class);
             startActivity(intent);
             finish();
         }
