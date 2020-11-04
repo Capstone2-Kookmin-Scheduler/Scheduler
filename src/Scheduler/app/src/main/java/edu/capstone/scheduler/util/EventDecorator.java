@@ -1,4 +1,4 @@
-package edu.capstone.scheduler.Activity;
+package edu.capstone.scheduler.util;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;

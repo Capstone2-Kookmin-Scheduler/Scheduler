@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -15,6 +16,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +54,16 @@ public class showList extends AppCompatActivity {
          * Todo child이벤트리스너로 변경
          */
 
-        ref.child("20201101").addValueEventListener(new ValueEventListener() {
+        java.util.Date currentTime = new java.util.Date();
+        SimpleDateFormat format_year = new SimpleDateFormat("yyyy");
+        SimpleDateFormat format_month = new SimpleDateFormat("MM");
+        SimpleDateFormat format_day = new SimpleDateFormat("dd");
+        String str_year = format_year.format(currentTime); int year = Integer.parseInt(str_year);
+        String str_month = format_month.format(currentTime); int month = Integer.parseInt(str_month);
+        String str_day = format_day.format(currentTime); int day = Integer.parseInt(str_day);
+
+        Log.e("날짜",str_year+str_month+String.format("%02d",day));
+        ref.child(str_year+str_month+String.format("%02d",day)).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 list.clear();
@@ -73,6 +84,7 @@ public class showList extends AppCompatActivity {
 
 
     } // end of onCreate
+
 
 } // end of class showList
 

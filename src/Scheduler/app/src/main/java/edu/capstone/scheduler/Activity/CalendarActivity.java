@@ -10,16 +10,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,13 +25,14 @@ import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 import edu.capstone.scheduler.R;
+import edu.capstone.scheduler.util.EventDecorator;
+import edu.capstone.scheduler.util.SaturdayDecorator;
+import edu.capstone.scheduler.util.SundayDecorator;
 
 public class CalendarActivity extends AppCompatActivity {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -91,17 +87,15 @@ public class CalendarActivity extends AppCompatActivity {
                 dates.clear();
                 for(DataSnapshot snap : snapshot.getChildren()){
                     String temp = snap.getKey();
-                    Log.e("temp", temp);
                     int year = Integer.parseInt(temp.substring(0,4));
                     int month = Integer.parseInt(temp.substring(4,6));
                     int dayy = Integer.parseInt(temp.substring(6,8));
-                    Log.e("날짜", Integer.toString(year) + Integer.toString(month) + Integer.toString(dayy));
+
                     Calendar calendar = Calendar.getInstance();
                     calendar.set(year,month-1,dayy);
                     CalendarDay day = CalendarDay.from(calendar);
                     dates.add(day);
                 }
-                Log.e("dates ",Integer.toString(dates.size()));
 //                try {
 //                    Thread.sleep(500);
 //                } catch (InterruptedException e) {
@@ -127,7 +121,8 @@ public class CalendarActivity extends AppCompatActivity {
         todaybtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                Toast.makeText(getApplicationContext(),"test",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), showList.class);
+                startActivity(intent);
             }
         });
 

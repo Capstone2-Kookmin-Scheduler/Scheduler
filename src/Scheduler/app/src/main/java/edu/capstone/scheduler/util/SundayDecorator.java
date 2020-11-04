@@ -1,4 +1,4 @@
-package edu.capstone.scheduler.Activity;
+package edu.capstone.scheduler.util;
 
 import android.graphics.Color;
 import android.text.style.ForegroundColorSpan;
