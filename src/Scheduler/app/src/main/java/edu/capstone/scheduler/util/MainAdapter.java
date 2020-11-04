@@ -1,11 +1,9 @@
-package edu.capstone.scheduler;
+package edu.capstone.scheduler.util;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import edu.capstone.scheduler.Object.Schedule;
+import edu.capstone.scheduler.R;
 
 public class MainAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
     List<Schedule> list;

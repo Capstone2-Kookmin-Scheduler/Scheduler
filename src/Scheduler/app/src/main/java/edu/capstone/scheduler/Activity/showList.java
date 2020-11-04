@@ -1,23 +1,14 @@
-package edu.capstone.scheduler;
+package edu.capstone.scheduler.Activity;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,7 +20,7 @@ import java.util.List;
 
 import edu.capstone.scheduler.Object.Schedule;
 import edu.capstone.scheduler.R;
-import edu.capstone.scheduler.util.util;
+import edu.capstone.scheduler.util.MainAdapter;
 
 public class showList extends AppCompatActivity {
 
