@@ -39,7 +39,7 @@
         <activity android:name=".Activity.TestActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".Activity.AddSchedule"></activity>
-
+        <activity android:name=".Activity.CalendarActivity"></activity>
         <receiver android:name=".util.CheckLocation" />
     </application>
 

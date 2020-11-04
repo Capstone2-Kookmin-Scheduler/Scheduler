@@ -166,7 +166,7 @@ public class AddSchedule extends AppCompatActivity {
 
                 regist(v, schedule_name.getText().toString());
 
-
+                finish();
             }
         });
 
