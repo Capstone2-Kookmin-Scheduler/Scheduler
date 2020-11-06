@@ -22,16 +22,16 @@ import java.util.List;
 
 import edu.capstone.scheduler.Object.Schedule;
 import edu.capstone.scheduler.R;
-import edu.capstone.scheduler.util.MainAdapter;
+import edu.capstone.scheduler.util.ScheduleListAdapter;
 
-public class showList extends AppCompatActivity {
+public class TodayListActivity extends AppCompatActivity {
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser mUser;
 
-    private MainAdapter mainAdapter;
+    private ScheduleListAdapter scheduleListAdapter;
     RecyclerView recyclerView;
     List<Schedule> list = new ArrayList<>();
 
@@ -45,8 +45,8 @@ public class showList extends AppCompatActivity {
         LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
         recyclerView.setHasFixedSize(false);
-        mainAdapter = new MainAdapter(list);
-        recyclerView.setAdapter(mainAdapter);
+        scheduleListAdapter = new ScheduleListAdapter(list);
+        recyclerView.setAdapter(scheduleListAdapter);
 
         //getUid() 로 수정
         ref = database.getReference("Schedule").child(mUser.getUid());
@@ -71,7 +71,7 @@ public class showList extends AppCompatActivity {
                 for(DataSnapshot item : snapshot.getChildren()) {
                     Schedule schedule = item.getValue(Schedule.class);
                     list.add(schedule);
-                    mainAdapter.notifyDataSetChanged();
+                    scheduleListAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -86,5 +86,5 @@ public class showList extends AppCompatActivity {
     } // end of onCreate
 
 
-} // end of class showList
+} // end of class TodayListActivity
 

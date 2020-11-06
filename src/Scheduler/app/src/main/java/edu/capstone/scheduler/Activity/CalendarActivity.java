@@ -121,7 +121,7 @@ public class CalendarActivity extends AppCompatActivity {
         todaybtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                Intent intent = new Intent(getApplicationContext(), showList.class);
+                Intent intent = new Intent(getApplicationContext(), TodayListActivity.class);
                 startActivity(intent);
             }
         });

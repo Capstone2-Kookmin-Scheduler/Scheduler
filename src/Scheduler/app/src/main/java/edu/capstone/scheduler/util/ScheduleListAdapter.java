@@ -13,10 +13,10 @@ import java.util.List;
 import edu.capstone.scheduler.Object.Schedule;
 import edu.capstone.scheduler.R;
 
-public class MainAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
+public class ScheduleListAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
     List<Schedule> list;
 
-    public MainAdapter(List<Schedule> list) {
+    public ScheduleListAdapter(List<Schedule> list) {
         this.list = list;
     }
 

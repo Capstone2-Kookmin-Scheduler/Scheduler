@@ -24,7 +24,7 @@ import com.google.firebase.auth.FirebaseUser;
 import edu.capstone.scheduler.R;
 
 public class LoginActivity extends AppCompatActivity {
-    private static final String TAG = "FirebaseAuthActivity";
+    private static final String TAG = "LoginActivity";
 
     private EditText email_editText;
     private EditText password_editText;
@@ -106,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void updateUI(FirebaseUser user){
         if(user!=null){
-            Intent intent = new Intent(this, TestActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
         }
