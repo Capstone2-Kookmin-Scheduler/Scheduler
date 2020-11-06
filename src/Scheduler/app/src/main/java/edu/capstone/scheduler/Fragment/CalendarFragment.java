@@ -31,6 +31,7 @@ import edu.capstone.scheduler.R;
 import edu.capstone.scheduler.util.EventDecorator;
 import edu.capstone.scheduler.util.SaturdayDecorator;
 import edu.capstone.scheduler.util.SundayDecorator;
+import edu.capstone.scheduler.util.TodayDecorator;
 
 public class CalendarFragment extends Fragment {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -38,6 +39,7 @@ public class CalendarFragment extends Fragment {
 
     private String mUid;
     MaterialCalendarView materialCalendarView;
+    final TodayDecorator todayDecorator = new TodayDecorator();
 
     private ArrayList<CalendarDay> dates = new ArrayList<>();
 
@@ -73,7 +75,7 @@ public class CalendarFragment extends Fragment {
                 .commit();
 
 
-        materialCalendarView.addDecorators(new SundayDecorator(), new SaturdayDecorator());
+        materialCalendarView.addDecorators(new SundayDecorator(), new SaturdayDecorator(), todayDecorator);
         //날짜 클릭시 일정 출력
         materialCalendarView.setOnDateChangedListener(new OnDateSelectedListener(){
             @Override
