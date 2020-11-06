@@ -33,6 +33,7 @@ import edu.capstone.scheduler.R;
 import edu.capstone.scheduler.util.EventDecorator;
 import edu.capstone.scheduler.util.SaturdayDecorator;
 import edu.capstone.scheduler.util.SundayDecorator;
+import edu.capstone.scheduler.util.TodayDecorator;
 
 public class CalendarActivity extends AppCompatActivity {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -43,6 +44,9 @@ public class CalendarActivity extends AppCompatActivity {
     MaterialCalendarView materialCalendarView;
     private long lastTimeBackPressed;
     private ArrayList<CalendarDay> dates = new ArrayList<>();
+
+    final TodayDecorator todayDecorator = new TodayDecorator();
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -59,7 +63,7 @@ public class CalendarActivity extends AppCompatActivity {
                 .commit();
 
 
-        materialCalendarView.addDecorators(new SundayDecorator(), new SaturdayDecorator());
+        materialCalendarView.addDecorators(new SundayDecorator(), new SaturdayDecorator(), todayDecorator);
         //날짜 클릭시 일정 출력
         materialCalendarView.setOnDateChangedListener(new OnDateSelectedListener(){
             @Override
