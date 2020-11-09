@@ -1,7 +1,9 @@
 package edu.capstone.scheduler.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -10,6 +12,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -18,7 +21,7 @@ import java.text.SimpleDateFormat;
 import edu.capstone.scheduler.Fragment.*;
 import edu.capstone.scheduler.R;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends BaseActivity {
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser mUser;
 
@@ -52,6 +55,15 @@ public class MainActivity extends FragmentActivity {
         fragmentTransaction.replace(R.id.scheduleFragment,scheduleFragment);
         fragmentTransaction.commit();
 
+        FloatingActionButton plusbtn =  findViewById(R.id.plusbtn);
+
+        plusbtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent(getApplicationContext(), AddSchedule.class);
+                startActivity(intent);
+            }
+        });
 
     }
     public void replaceSchedule(Fragment fragment) {

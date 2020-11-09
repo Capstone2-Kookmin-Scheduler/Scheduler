@@ -23,7 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import edu.capstone.scheduler.R;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
     private static final String TAG = "LoginActivity";
 
     private EditText email_editText;

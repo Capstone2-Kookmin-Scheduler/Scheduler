@@ -6,7 +6,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import edu.capstone.scheduler.Activity.CalendarActivity;
 import edu.capstone.scheduler.Activity.MainActivity;
 import edu.capstone.scheduler.R;
 import edu.capstone.scheduler.util.EventDecorator;
@@ -42,7 +40,7 @@ public class CalendarFragment extends Fragment {
     final TodayDecorator todayDecorator = new TodayDecorator();
 
     private ArrayList<CalendarDay> dates = new ArrayList<>();
-
+    private String tempDate;
     public CalendarFragment() {
         // Required empty public constructor
     }
@@ -88,7 +86,16 @@ public class CalendarFragment extends Fragment {
                 String str_day = new SimpleDateFormat("dd").format(date.getDate()); int day = Integer.parseInt(str_day);
                 String select_Date = str_year+str_month+String.format("%02d",day);
 
-                ((MainActivity)getActivity()).replaceSchedule(ScheduleFragment.newInstance(mUid,select_Date));
+                //같은 날짜를 클릭했을 때 리스트 새로고침 방지
+                if(tempDate==null){
+                    ((MainActivity) getActivity()).replaceSchedule(ScheduleFragment.newInstance(mUid, select_Date));
+                    tempDate = select_Date;
+                }
+
+                else if(!tempDate.equals(select_Date)) {
+                    ((MainActivity) getActivity()).replaceSchedule(ScheduleFragment.newInstance(mUid, select_Date));
+                    tempDate = select_Date;
+                }
 
             }
         });

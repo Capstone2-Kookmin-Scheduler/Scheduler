@@ -1,4 +1,4 @@
-package edu.capstone.scheduler.Activity;
+package edu.capstone.scheduler.temp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

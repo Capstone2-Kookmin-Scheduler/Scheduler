@@ -28,7 +28,7 @@ import edu.capstone.scheduler.R;
 import static edu.capstone.scheduler.util.textFilter.*;
 
 
-public class SignupActivity extends AppCompatActivity {
+public class SignupActivity extends BaseActivity {
     private static final String TAG = "SignupActivity";
 
     private EditText idEdit;

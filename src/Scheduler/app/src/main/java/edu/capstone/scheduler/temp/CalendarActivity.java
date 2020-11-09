@@ -1,4 +1,4 @@
-package edu.capstone.scheduler.Activity;
+package edu.capstone.scheduler.temp;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import edu.capstone.scheduler.Activity.AddSchedule;
 import edu.capstone.scheduler.R;
 import edu.capstone.scheduler.util.EventDecorator;
 import edu.capstone.scheduler.util.SaturdayDecorator;

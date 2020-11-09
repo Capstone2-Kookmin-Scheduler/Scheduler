@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activity.TodayListActivity"></activity>
+        <activity android:name=".temp.TodayListActivity"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -39,7 +39,7 @@
         <activity android:name=".Activity.TestActivity" />
 
         <activity android:name=".Activity.AddSchedule"></activity>
-        <activity android:name=".Activity.CalendarActivity"></activity>
+        <activity android:name=".temp.CalendarActivity"></activity>
         <activity android:name=".Activity.MainActivity"/>
         <receiver android:name=".util.CheckLocation" />
     </application>
