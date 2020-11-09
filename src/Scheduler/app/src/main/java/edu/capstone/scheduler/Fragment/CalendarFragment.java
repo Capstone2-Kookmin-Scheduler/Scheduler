@@ -1,5 +1,7 @@
 package edu.capstone.scheduler.Fragment;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -34,7 +36,8 @@ import edu.capstone.scheduler.util.TodayDecorator;
 public class CalendarFragment extends Fragment {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref;
-
+    private Context mContext;
+    private Activity activity;
     private String mUid;
     MaterialCalendarView materialCalendarView;
     final TodayDecorator todayDecorator = new TodayDecorator();
@@ -116,7 +119,7 @@ public class CalendarFragment extends Fragment {
                     CalendarDay day = CalendarDay.from(calendar);
                     dates.add(day);
                 }
-                materialCalendarView.addDecorators(new EventDecorator(Color.RED, dates, getActivity()));
+                materialCalendarView.addDecorators(new EventDecorator(Color.RED, dates, activity));
 
             }
 
@@ -126,5 +129,12 @@ public class CalendarFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+            activity = (Activity) context;
     }
 }

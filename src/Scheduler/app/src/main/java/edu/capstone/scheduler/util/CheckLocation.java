@@ -116,7 +116,7 @@ public class CheckLocation extends BroadcastReceiver {
     }
     public void noti(Context context, String schedule_name, int total_time, String arrival_location){
         notificationManager = (NotificationManager)context.getSystemService(NOTIFICATION_SERVICE);
-        notificationChannel = new NotificationChannel(schedule_name, "channel", NotificationManager.IMPORTANCE_DEFAULT);
+        notificationChannel = new NotificationChannel("noti_channel", schedule_name, NotificationManager.IMPORTANCE_DEFAULT);
         notificationChannel.setDescription("알림 테스트");
         notificationManager.createNotificationChannel(notificationChannel);
 

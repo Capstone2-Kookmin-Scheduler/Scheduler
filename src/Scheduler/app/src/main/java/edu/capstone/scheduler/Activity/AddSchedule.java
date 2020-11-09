@@ -47,7 +47,7 @@ import edu.capstone.scheduler.Object.Date;
 import edu.capstone.scheduler.Object.Schedule;
 import edu.capstone.scheduler.R;
 
-public class AddSchedule extends AppCompatActivity {
+public class AddSchedule extends BaseActivity {
     private EditText schedule_name, arrival_location, departure_location;
     private TimePicker timePicker;
     private DatePicker datePicker;
@@ -165,7 +165,6 @@ public class AddSchedule extends AppCompatActivity {
                 ref.updateChildren(schedule.toMap());
 
                 regist(v, schedule_name.getText().toString());
-
                 finish();
             }
         });
@@ -264,7 +263,7 @@ public class AddSchedule extends AppCompatActivity {
         intent.putExtra("minute", minute);
         intent.putExtra("schedule_name", schedule_name.getText().toString());
         intent.putExtra("arrival_location",arrival_placeName);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(AddSchedule.this, count, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(AddSchedule.this, hour*60+minute, intent, 0);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             //hour = timePicker.getHour();
