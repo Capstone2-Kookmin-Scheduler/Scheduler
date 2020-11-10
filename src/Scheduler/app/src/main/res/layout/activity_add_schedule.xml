@@ -105,12 +105,6 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/test"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="test"/>
-
-    <Button
         android:id="@+id/add_schedule"
         android:layout_width="match_parent"
         android:layout_height="50dp"

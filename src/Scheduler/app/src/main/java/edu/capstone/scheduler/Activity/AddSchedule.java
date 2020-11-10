@@ -1,12 +1,12 @@
 package edu.capstone.scheduler.Activity;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,7 +40,6 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 import edu.capstone.scheduler.util.CheckLocation;
 import edu.capstone.scheduler.Object.Date;
@@ -51,11 +50,10 @@ public class AddSchedule extends BaseActivity {
     private EditText schedule_name, arrival_location, departure_location;
     private TimePicker timePicker;
     private DatePicker datePicker;
-    private Button search_location, add_schedule, search_departure_location, test;
+    private Button search_location, add_schedule, search_departure_location;
     private Double departure_lat, departure_lng, arrival_lat, arrival_lng;
     private String departure_placeName, arrival_placeName;
     private int year, month, day, hour, minute;
-    private int estimated_time, total_time;
     private Schedule schedule;
     private AlarmManager alarmManager;
     private int count = 0;
@@ -63,8 +61,6 @@ public class AddSchedule extends BaseActivity {
     private static int AUTOCOMPLETE_REQUEST_CODE_DEPARTURE = 1;
     private static int AUTOCOMPLETE_REQUEST_CODE_ARRIVAL = 2;
     List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG);
-
-    Handler handler = new Handler();
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser mUser;
@@ -87,7 +83,7 @@ public class AddSchedule extends BaseActivity {
         search_location = (Button) findViewById(R.id.search_location);
         search_departure_location = (Button) findViewById(R.id.search_departure_location);
         add_schedule = (Button) findViewById(R.id.add_schedule);
-        test = (Button) findViewById(R.id.test);
+
 
         Places.initialize(getApplicationContext(), "AIzaSyCG6NeTZ9cdyvFoz_tNIsBHMJmfCKw1vl0");
         PlacesClient placesClient = Places.createClient(this);
@@ -140,32 +136,14 @@ public class AddSchedule extends BaseActivity {
             }
         });
 
-        test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                calculate_time(departure_lng, departure_lat, arrival_lng, arrival_lat);
-            }
-        });
 
         add_schedule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Date date = new Date(year, month, day, hour, minute);
                 schedule = new Schedule(schedule_name.getText().toString(), date, departure_lat, departure_lng, arrival_lat, arrival_lng, departure_placeName, arrival_placeName, 0);
-                //calculate_time(departure_lng, departure_lat, arrival_lng, arrival_lat);
-                schedule.setTotal_time(total_time);
-                String dateStr = Integer.toString(date.getYear())+String.format("%02d",date.getMonth())+String.format("%02d",date.getDay());
 
-                Log.i("날짜", Integer.toString(year)+Integer.toString(month) + Integer.toString(day));
-                Log.i("시간", Integer.toString(hour) + Integer.toString(minute));
-                Log.i("장소", departure_placeName+arrival_placeName);
-                Log.i("소요시간", Integer.toString(total_time));
-
-                ref = database.getReference("Schedule/").child(mUser.getUid()).child(dateStr).child(schedule.getName());
-                ref.updateChildren(schedule.toMap());
-
-                regist(v, schedule_name.getText().toString());
-                finish();
+                CalculateTime(getApplicationContext(), schedule);
             }
         });
 
@@ -218,51 +196,20 @@ public class AddSchedule extends BaseActivity {
         }
     }
 
-    public void calculate_time(Double departure_lng, Double departure_lat, Double arrival_lng, Double arrival_lat ) {
-        ODsayService odsayService = ODsayService.init(AddSchedule.this,"suLGma46yOIqhKYbRFlIXAWLeDWumTQqfmY0RJ+ZnvE");
-        odsayService.setReadTimeout(5000);
-        odsayService.setConnectionTimeout(5000);
-
-        OnResultCallbackListener onResultCallbackListener = new OnResultCallbackListener() {
-            @Override
-            public void onSuccess(ODsayData odsayData, API api) {
-                if(api == API.SEARCH_PUB_TRANS_PATH){
-                    try {
-                        JSONArray jsonArray = odsayData.getJson().getJSONObject("result").getJSONArray("path");
-                        total_time = jsonArray.getJSONObject(1).getJSONObject("info").getInt("totalTime");
-                        Log.i("예상 소요시간 ", Integer.toString(total_time));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-
-            }
-
-            @Override
-            public void onError(int i, String s, API api) {
-                if(api==API.BUS_STATION_INFO){}
-            }
-        };
-
-        // 출경도,출위도,도경도,도위도,정렬방식(0:추천,1:타입별),검색방식(0:도시내검색,1:도시간검색),경로수단(0:모두,1:지하철,2:버스)
-        odsayService.requestSearchPubTransPath(departure_lng.toString(), departure_lat.toString(), arrival_lng.toString(), arrival_lat.toString(), "0", "0", "0", onResultCallbackListener);
 
 
-    } // end of Calculate
 
-
-    public void regist(View view, String str) {
+    public void regist(Schedule schedule) {
         count++;
         alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 
         Intent intent = new Intent(AddSchedule.this, CheckLocation.class);
-        intent.putExtra("arrival_lat", arrival_lat);
-        intent.putExtra("arrival_lng", arrival_lng);
-        intent.putExtra("hour", hour);
-        intent.putExtra("minute", minute);
+        intent.putExtra("arrival_lat", schedule.getArrival_lat());
+        intent.putExtra("arrival_lng", schedule.getArrival_lng());
+        intent.putExtra("hour", schedule.getDate().getHour());
+        intent.putExtra("minute", schedule.getDate().getMinute());
         intent.putExtra("schedule_name", schedule_name.getText().toString());
-        intent.putExtra("arrival_location",arrival_placeName);
+        intent.putExtra("arrival_location", schedule.getArrival_location());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(AddSchedule.this, hour*60+minute, intent, 0);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
@@ -290,8 +237,45 @@ public class AddSchedule extends BaseActivity {
         alarmManager.cancel(pendingIntent);
     } //unRegist
 
+    private void CalculateTime(Context context, Schedule schedule){
+        Schedule mSchedule = schedule;
+        ODsayService odsayService = ODsayService.init(context,"suLGma46yOIqhKYbRFlIXAWLeDWumTQqfmY0RJ+ZnvE");
+        odsayService.setReadTimeout(5000);
+        odsayService.setConnectionTimeout(5000);
 
+        OnResultCallbackListener onResultCallbackListener = new OnResultCallbackListener() {
+            @Override
+            public void onSuccess(ODsayData odsayData, API api) {
+                if(api == API.SEARCH_PUB_TRANS_PATH){
+                    try {
+                        JSONArray jsonArray = odsayData.getJson().getJSONObject("result").getJSONArray("path");
+                        int time = jsonArray.getJSONObject(1).getJSONObject("info").getInt("totalTime");
+                        Log.i("예상 소요시간 ", Integer.toString(time));
+                        mSchedule.setTotal_time(time);
+                        Date date = mSchedule.getDate();
+                        String dateStr = Integer.toString(date.getYear())+String.format("%02d",date.getMonth())+String.format("%02d",date.getDay());
 
+                        ref = database.getReference("Schedule/").child(mUser.getUid()).child(dateStr).child(schedule.getName());
+                        ref.updateChildren(schedule.toMap());
+                        regist(mSchedule);
+                        finish();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onError(int i, String s, API api) {
+                if(api==API.BUS_STATION_INFO){}
+            }
+        };
+
+        // 출경도,출위도,도경도,도위도,정렬방식(0:추천,1:타입별),검색방식(0:도시내검색,1:도시간검색),경로수단(0:모두,1:지하철,2:버스)
+        odsayService.requestSearchPubTransPath(mSchedule.getDeparture_lng().toString(), mSchedule.getDeparture_lat().toString(), mSchedule.getArrival_lng().toString(), mSchedule.getArrival_lat().toString(), "0", "0", "0", onResultCallbackListener);
+    }
 
 
 
