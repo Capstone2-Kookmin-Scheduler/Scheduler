@@ -15,6 +15,7 @@ public class Schedule {
     private String departure_location;
     private String arrival_location;
     private int total_time;
+    private String uid;
 
     public Schedule(){    }
     public Schedule(String name, Date date, Double departure_lat, Double departure_lng, Double arrival_lat, Double arrival_lng, String departure_location, String arrival_location, int total_time){
@@ -41,7 +42,7 @@ public class Schedule {
         result.put("departure_location",departure_location);
         result.put("arrival_location",arrival_location);
         result.put("total_time",total_time);
-
+        result.put("uid",uid);
         return result;
     }
 
@@ -116,5 +117,13 @@ public class Schedule {
 
     public void setTotal_time(int total_time) {
         this.total_time = total_time;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

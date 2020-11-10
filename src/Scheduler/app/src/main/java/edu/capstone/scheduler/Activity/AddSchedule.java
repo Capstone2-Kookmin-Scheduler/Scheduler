@@ -37,7 +37,9 @@ import org.json.JSONException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.capstone.scheduler.util.CheckLocation;
 import edu.capstone.scheduler.Object.Date;
@@ -252,9 +254,12 @@ public class AddSchedule extends BaseActivity {
                         mSchedule.setTotal_time(time);
                         Date date = mSchedule.getDate();
                         String dateStr = Integer.toString(date.getYear())+String.format("%02d",date.getMonth())+String.format("%02d",date.getDay());
-
-                        ref = database.getReference("Schedule/").child(mUser.getUid()).child(dateStr).child(schedule.getName());
-                        ref.updateChildren(schedule.toMap());
+                        ref = database.getReference("Schedule/").child(mUser.getUid()).child(dateStr);
+                        String schedule_uid = ref.push().getKey();
+                        mSchedule.setUid(schedule_uid);
+                        Map<String,Object> childUpdates = new HashMap<>();
+                        childUpdates.put(schedule_uid,mSchedule.toMap());
+                        ref.updateChildren(childUpdates);
                         regist(mSchedule);
 
                         finish();

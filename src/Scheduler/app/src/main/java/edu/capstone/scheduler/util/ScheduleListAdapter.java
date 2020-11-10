@@ -65,7 +65,7 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
                         Schedule schedule = list.get(pos);
                         Date date = schedule.getDate();
                         String dateStr = Integer.toString(date.getYear())+String.format("%02d",date.getMonth())+String.format("%02d",date.getDay());
-                        ref = database.getReference("Schedule/").child(mUser.getUid()).child(dateStr).child(schedule.getName());
+                        ref = database.getReference("Schedule/").child(mUser.getUid()).child(dateStr).child(schedule.getUid());
                         ref.removeValue();
                         list.remove(pos);
                         notifyItemRemoved(pos);
