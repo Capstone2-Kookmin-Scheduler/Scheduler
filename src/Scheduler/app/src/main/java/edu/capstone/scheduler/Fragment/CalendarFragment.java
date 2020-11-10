@@ -103,6 +103,7 @@ public class CalendarFragment extends Fragment {
             }
         });
 
+
         ref = database.getReference("Schedule").child(mUid);
         ref.addValueEventListener(new ValueEventListener() {
             @Override

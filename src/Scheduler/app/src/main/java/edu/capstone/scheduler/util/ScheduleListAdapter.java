@@ -8,14 +8,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.List;
 
+import edu.capstone.scheduler.Object.Date;
 import edu.capstone.scheduler.Object.Schedule;
 import edu.capstone.scheduler.R;
 
-public class ScheduleListAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
+public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapter.RecyclerViewHolder> {
     List<Schedule> list;
-
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference ref;
+    FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
     public ScheduleListAdapter(List<Schedule> list) {
         this.list = list;
     }
@@ -40,17 +48,34 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<RecyclerViewHolder
         return list.size();
     }
 
+    public class RecyclerViewHolder extends RecyclerView.ViewHolder{
+        TextView textView1, textView2, textView3;
 
+        public RecyclerViewHolder(@NonNull View itemView) {
+            super(itemView);
+            textView1 = itemView.findViewById(R.id.textView1);
+            textView2 = itemView.findViewById(R.id.textView2);
+            textView3 = itemView.findViewById(R.id.textView3);
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    int pos = getAdapterPosition();
+                    if (pos != RecyclerView.NO_POSITION) {
+                        Schedule schedule = list.get(pos);
+                        Date date = schedule.getDate();
+                        String dateStr = Integer.toString(date.getYear())+String.format("%02d",date.getMonth())+String.format("%02d",date.getDay());
+                        ref = database.getReference("Schedule/").child(mUser.getUid()).child(dateStr).child(schedule.getName());
+                        ref.removeValue();
+                        list.remove(pos);
+                        notifyItemRemoved(pos);
+                        notifyDataSetChanged();
+                    }
+                    return false;
+                }
+            });
+        }
+    }
 
 }  // end of class MainAdapter
 
-class RecyclerViewHolder extends RecyclerView.ViewHolder{
-    TextView textView1, textView2, textView3;
-
-    public RecyclerViewHolder(@NonNull View itemView) {
-        super(itemView);
-        textView1 = itemView.findViewById(R.id.textView1);
-        textView2 = itemView.findViewById(R.id.textView2);
-        textView3 = itemView.findViewById(R.id.textView3);
-    }
-}

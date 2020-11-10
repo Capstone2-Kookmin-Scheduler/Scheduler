@@ -6,10 +6,8 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -258,6 +256,7 @@ public class AddSchedule extends BaseActivity {
                         ref = database.getReference("Schedule/").child(mUser.getUid()).child(dateStr).child(schedule.getName());
                         ref.updateChildren(schedule.toMap());
                         regist(mSchedule);
+
                         finish();
                     } catch (JSONException e) {
                         e.printStackTrace();
