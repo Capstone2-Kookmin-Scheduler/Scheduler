@@ -18,6 +18,7 @@ import com.odsay.odsayandroidsdk.OnResultCallbackListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import edu.capstone.scheduler.Activity.MainActivity;
 import edu.capstone.scheduler.R;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -121,6 +122,9 @@ public class CheckLocation extends BroadcastReceiver {
         notificationManager.createNotificationChannel(notificationChannel);
 
         String time = Integer.toString(total_time) + "분";
+        /**
+         * 알림 클릭시 앱으로 이동 구현
+         */
 
         noti = new NotificationCompat.Builder(context, "noti_channel")
                 .setDefaults(Notification.DEFAULT_LIGHTS)
