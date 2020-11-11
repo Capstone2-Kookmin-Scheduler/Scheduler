@@ -41,7 +41,16 @@
         <activity android:name=".Activity.AddSchedule"></activity>
         <activity android:name=".temp.CalendarActivity"></activity>
         <activity android:name=".Activity.MainActivity"/>
+        <activity android:name=".Activity.ShowMapActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <receiver android:name=".util.CheckLocation" />
+
     </application>
 
 </manifest>

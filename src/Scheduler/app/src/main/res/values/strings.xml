@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">조금 편리한 스케줄러</string>
+    <string name="mapbox_access_token">pk.eyJ1Ijoia29veW0iLCJhIjoiY2toZDY0d3ZoMDJxbzJzbjBydnQ3c29vbiJ9.31PTeEwcCiLoadQz0qUbpQ</string>
 </resources>
