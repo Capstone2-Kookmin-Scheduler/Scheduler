@@ -3,11 +3,15 @@ package edu.capstone.scheduler.util;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import com.odsay.odsayandroidsdk.API;
@@ -19,6 +23,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import edu.capstone.scheduler.Activity.MainActivity;
+import edu.capstone.scheduler.Activity.ShowMapActivity;
+import edu.capstone.scheduler.Object.Schedule;
 import edu.capstone.scheduler.R;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -35,6 +41,8 @@ public class CheckLocation extends BroadcastReceiver {
     private NotificationManager notificationManager;
     private Notification noti;
     private NotificationChannel notificationChannel;
+    private static final String NOTI_CHNNEL_ID = "noti_channel";
+    private static int NOTI_ID = 1234;
     private Context mContext;
 
     @Override
@@ -86,7 +94,7 @@ public class CheckLocation extends BroadcastReceiver {
                         Log.i("출발 시간  " , calculateDepartureTime(hour, minute, total_time));
 
                         noti(mContext,schedule_name,total_time,arrival_location);
-                        notifi(notificationManager,noti, minute);
+                        notifi(notificationManager,noti, NOTI_ID);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -115,20 +123,31 @@ public class CheckLocation extends BroadcastReceiver {
 
         return (h + " : " + m);
     }
-    public void noti(Context context, String schedule_name, int total_time, String arrival_location){
+
+    public void noti(Context context,String schedule_name, int total_time, String arrival_location){
         notificationManager = (NotificationManager)context.getSystemService(NOTIFICATION_SERVICE);
-        notificationChannel = new NotificationChannel("noti_channel", schedule_name, NotificationManager.IMPORTANCE_DEFAULT);
+        notificationChannel = new NotificationChannel(NOTI_CHNNEL_ID, schedule_name, NotificationManager.IMPORTANCE_DEFAULT);
         notificationChannel.setDescription("알림 테스트");
+        notificationChannel.setLightColor(Color.BLUE);
         notificationManager.createNotificationChannel(notificationChannel);
 
         String time = Integer.toString(total_time) + "분";
         /**
          * 알림 클릭시 앱으로 이동 구현
          */
+        Intent notiClickIntent = new Intent(context, ShowMapActivity.class);
+        notiClickIntent.putExtra("NOTI_ID", NOTI_ID);
+        notiClickIntent.putExtra("lat",lat);
+        notiClickIntent.putExtra("lng",lng);
+        notiClickIntent.putExtra("arrival_lat",arrival_lat);
+        notiClickIntent.putExtra("arrival_lng",arrival_lng);
 
-        noti = new NotificationCompat.Builder(context, "noti_channel")
+        PendingIntent notiPendingIntent = PendingIntent.getActivity(context, NOTI_ID, notiClickIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        noti = new NotificationCompat.Builder(context, NOTI_CHNNEL_ID)
                 .setDefaults(Notification.DEFAULT_LIGHTS)
                 .setContentTitle(schedule_name)
+                .setContentIntent(notiPendingIntent)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentText("도착지 : "+ arrival_location + "\n예상소요시간 : " + time)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -137,9 +156,9 @@ public class CheckLocation extends BroadcastReceiver {
 
     }
 
-    public void notifi(NotificationManager ntm, Notification noti, int channel){
+    public void notifi(NotificationManager ntm, Notification noti, int notiId){
         Log.e("알림 확인","notifi");
-        ntm.notify(channel,noti);
+        ntm.notify(notiId,noti);
     }
 } // end of CheckLocation
 

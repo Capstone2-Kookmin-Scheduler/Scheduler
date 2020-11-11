@@ -1,6 +1,8 @@
 package edu.capstone.scheduler.Activity;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -83,6 +85,7 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
     private MapboxDirections client;
     private static DirectionsRoute currentRoute;
 
+    private int NOTI_ID;
     private Double lat;
     private Double lng;
     private Point origin;
@@ -93,6 +96,15 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
 
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_showmap);
+        Bundle extras = getIntent().getExtras();
+
+        if (extras != null) {
+            NOTI_ID = extras.getInt("NOTI_ID");
+            lat = extras.getDouble("lat");
+            lng = extras.getDouble("lng");
+            origin = Point.fromLngLat(lng,lat);
+            destination = Point.fromLngLat(extras.getDouble("arrival_lng"),extras.getDouble("arrival_lat"));
+        }
 
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
@@ -100,7 +112,10 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
         Log.e("latlng","는 "+lat+"      "+lng);
         mapView.getMapAsync(this);
 
+        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        nm.cancel(NOTI_ID);
     }
+
     @Override
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
         ShowMapActivity.this.mapboxMap = mapboxMap;
@@ -119,8 +134,6 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
                 /**
                  * Todo origin - 내 현재 위치, destination - 경로의 첫 정류장/지하철역 위도경도
                  */
-
-                destination = Point.fromLngLat(126.995417,37.561623);
                 initLayers(style);
                 initSource(style);
                 getRoute(origin,destination);
@@ -339,8 +352,7 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
                 .setPriority(LocationEngineRequest.PRIORITY_HIGH_ACCURACY)
                 .setMaxWaitTime(MAX_WAIT_TIME).build();
         locationEngine.requestLocationUpdates(request, callback, getMainLooper());
-        locationEngine.getLastLocation();
-        Location location = locationEngine.getLastLocation(callback);
+        locationEngine.getLastLocation(callback);
 
     }
 }
