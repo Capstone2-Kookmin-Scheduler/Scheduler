@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.location.LocationManagerCompat;
 
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineCallback;
@@ -326,7 +327,7 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
                 lat = result.getLastLocation().getLatitude();
                 lng = result.getLastLocation().getLongitude();
                 origin = Point.fromLngLat(lng,lat);
-
+                getRoute(origin,destination);
                 // Pass the new location to the Maps SDK's LocationComponent
                 if (activity.mapboxMap != null && result.getLastLocation() != null) {
                     activity.mapboxMap.getLocationComponent().forceLocationUpdate(result.getLastLocation());
@@ -353,6 +354,7 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
                 .setMaxWaitTime(MAX_WAIT_TIME).build();
         locationEngine.requestLocationUpdates(request, callback, getMainLooper());
         locationEngine.getLastLocation(callback);
+
 
     }
 }
