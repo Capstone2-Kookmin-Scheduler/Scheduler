@@ -7,11 +7,15 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.location.LocationManagerCompat;
 
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineCallback;
@@ -29,8 +33,6 @@ import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.camera.CameraPosition;
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
@@ -38,21 +40,20 @@ import com.mapbox.mapboxsdk.location.modes.CameraMode;
 import com.mapbox.mapboxsdk.location.modes.RenderMode;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.MapboxMapOptions;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.plugins.localization.LocalizationPlugin;
+import com.mapbox.mapboxsdk.plugins.markerview.MarkerView;
+import com.mapbox.mapboxsdk.plugins.markerview.MarkerViewManager;
 import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.mapboxsdk.style.layers.Property;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
-import com.mapbox.mapboxsdk.utils.BitmapUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 
 import edu.capstone.scheduler.R;
-import edu.capstone.scheduler.util.GpsTracker;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -66,6 +67,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineCap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineColor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineJoin;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback, PermissionsListener {
     private static final String ROUTE_LAYER_ID = "route-layer-id";
@@ -82,6 +84,8 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
     private MapView mapView;
     private MapboxMap mapboxMap;
     private PermissionsManager permissionsManager;
+    private MarkerView markerView;
+    private MarkerViewManager markerViewManager;
 
     private MapboxDirections client;
     private static DirectionsRoute currentRoute;
@@ -124,7 +128,18 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
         mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
-                LocalizationPlugin localizationPlugin = new LocalizationPlugin(mapView, mapboxMap, style);
+                // 버스정류장/지하철역 마커뷰 표시
+                markerViewManager = new MarkerViewManager(mapView, ShowMapActivity.this.mapboxMap);
+                View customView = LayoutInflater.from(ShowMapActivity.this).inflate(R.layout.marker_view,null);
+                customView.setLayoutParams(new FrameLayout.LayoutParams(WRAP_CONTENT,WRAP_CONTENT));
+                TextView titleTextView = customView.findViewById(R.id.marker_window_title);
+                titleTextView.setText("제목");
+                TextView snippetTextView = customView.findViewById(R.id.marker_window_snippet);
+                snippetTextView.setText("내용");
+                markerView = new MarkerView(new LatLng(destination.latitude(),destination.longitude()),customView);
+                markerViewManager.addMarker(markerView);
+
+                LocalizationPlugin localizationPlugin = new LocalizationPlugin(mapView, ShowMapActivity.this.mapboxMap, style);
                 enableLocationComponent(style);
                 try {
                     localizationPlugin.matchMapLanguageWithDeviceDefault();
@@ -132,9 +147,6 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
                     Log.d("ShowMapActivity", exception.toString());
                 }
 
-                /**
-                 * Todo origin - 내 현재 위치, destination - 경로의 첫 정류장/지하철역 위도경도
-                 */
                 initLayers(style);
                 initSource(style);
                 getRoute(origin,destination);
@@ -145,6 +157,7 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
         });
 
     }
+
     private void initSource(@NonNull Style loadedMapStyle) {
         loadedMapStyle.addSource(new GeoJsonSource(ROUTE_SOURCE_ID));
 
