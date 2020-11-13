@@ -104,6 +104,8 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
     private PermissionsManager permissionsManager;
     private MarkerView markerView;
     private MarkerViewManager markerViewManager;
+    private TextView titleTextView;
+    private TextView snippetTextView;
 
     private MapboxDirections client;
     private static DirectionsRoute currentRoute;
@@ -149,15 +151,7 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 // 버스정류장/지하철역 마커뷰 표시
-                markerViewManager = new MarkerViewManager(mapView, ShowMapActivity.this.mapboxMap);
-                View customView = LayoutInflater.from(ShowMapActivity.this).inflate(R.layout.marker_view, null);
-                customView.setLayoutParams(new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
-                TextView titleTextView = customView.findViewById(R.id.marker_window_title);
-                titleTextView.setText("제목");
-                TextView snippetTextView = customView.findViewById(R.id.marker_window_snippet);
-                snippetTextView.setText("내용");
-                markerView = new MarkerView(new LatLng(destination.latitude(), destination.longitude()), customView);
-                markerViewManager.addMarker(markerView);
+
 
                 LocalizationPlugin localizationPlugin = new LocalizationPlugin(mapView, ShowMapActivity.this.mapboxMap, style);
                 enableLocationComponent(style);
@@ -473,8 +467,20 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
                             else {
                                 startName = jsonArray.getJSONObject(i).getString("startName");
                                 endName = jsonArray.getJSONObject(i).getString("endName");
+                                markerViewManager = new MarkerViewManager(mapView, ShowMapActivity.this.mapboxMap);
+                                View customView = LayoutInflater.from(ShowMapActivity.this).inflate(R.layout.marker_view, null);
+                                customView.setLayoutParams(new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
+                                titleTextView = customView.findViewById(R.id.marker_window_title);
+                                snippetTextView = customView.findViewById(R.id.marker_window_snippet);
+                                titleTextView.setText(startName);
+                                snippetTextView.setText(endName);
+                                markerView = new MarkerView(new LatLng(destination.latitude(), destination.longitude()), customView);
+                                markerViewManager.addMarker(markerView);
+
+
+                                Log.i("출발 목적지", startName+endName);
                             }
-                            Log.i("출발 목적지", startName+endName);
+
                         }
 
 //                        int time = jsonArray.getJSONObject(1).getJSONObject("info").getInt("totalTime");

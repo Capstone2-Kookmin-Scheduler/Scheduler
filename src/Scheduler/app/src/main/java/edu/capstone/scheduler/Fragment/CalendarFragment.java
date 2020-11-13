@@ -7,6 +7,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -22,10 +24,12 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 
 import edu.capstone.scheduler.Activity.MainActivity;
 import edu.capstone.scheduler.R;
@@ -33,6 +37,7 @@ import edu.capstone.scheduler.util.EventDecorator;
 import edu.capstone.scheduler.util.SaturdayDecorator;
 import edu.capstone.scheduler.util.SundayDecorator;
 import edu.capstone.scheduler.util.TodayDecorator;
+import edu.capstone.scheduler.util.util;
 
 public class CalendarFragment extends Fragment {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -69,13 +74,32 @@ public class CalendarFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
+        CalendarDay date = new CalendarDay();
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.app_toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        final ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        actionBar.setTitle(Integer.toString(date.getYear()) + "년 " + Integer.toString(date.getMonth() + 1) + "월");
 
         materialCalendarView = (MaterialCalendarView) view.findViewById(R.id.calenarView);
         materialCalendarView.state().edit()
                 .setFirstDayOfWeek(Calendar.SUNDAY)
                 .setCalendarDisplayMode(CalendarMode.MONTHS)
                 .commit();
+        //타이틀 안보이게
+        materialCalendarView.setTopbarVisible(false);
 
+        //달력 사이즈 조절
+        materialCalendarView.setTileHeightDp(50);
+
+
+        materialCalendarView.setOnMonthChangedListener(new OnMonthChangedListener() {
+            @Override
+            public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
+                SimpleDateFormat df = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+                if (null != actionBar)
+                    actionBar.setTitle(Integer.toString(date.getYear()) + "년 " + Integer.toString(date.getMonth() + 1) + "월");
+            }
+        });
 
         materialCalendarView.addDecorators(new SundayDecorator(), new SaturdayDecorator(), todayDecorator);
         //날짜 클릭시 일정 출력
@@ -121,8 +145,8 @@ public class CalendarFragment extends Fragment {
                     CalendarDay day = CalendarDay.from(calendar);
                     dates.add(day);
                 }
-                materialCalendarView.addDecorators(new EventDecorator(Color.RED, dates, activity));
-
+                if(!dates.isEmpty())
+                    materialCalendarView.addDecorators(new EventDecorator(Color.RED, dates, activity));
             }
 
             @Override
@@ -132,7 +156,6 @@ public class CalendarFragment extends Fragment {
         });
         return view;
     }
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);

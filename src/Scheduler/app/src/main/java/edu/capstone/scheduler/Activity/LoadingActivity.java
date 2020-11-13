@@ -21,7 +21,8 @@ import edu.capstone.scheduler.R;
 
 public class LoadingActivity extends Activity {
     String[] PERMISSIONS = {
-            Manifest.permission.ACCESS_FINE_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION
     };
 
 
@@ -105,7 +106,7 @@ public class LoadingActivity extends Activity {
     }
     private void getPermission(){
         ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION
                 },
                 1000);
     }

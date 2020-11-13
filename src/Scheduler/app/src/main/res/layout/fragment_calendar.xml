@@ -6,7 +6,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:id="@+id/app_toolbar"/>
     <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:id="@+id/calenarView"
         android:layout_width="match_parent"
