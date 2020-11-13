@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -18,6 +19,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,6 +38,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import edu.capstone.scheduler.Activity.MainActivity;
+import edu.capstone.scheduler.Object.Schedule;
 import edu.capstone.scheduler.R;
 import edu.capstone.scheduler.util.EventDecorator;
 import edu.capstone.scheduler.util.SaturdayDecorator;
@@ -50,7 +54,7 @@ public class CalendarFragment extends Fragment {
     private String mUid;
     MaterialCalendarView materialCalendarView;
     final TodayDecorator todayDecorator = new TodayDecorator();
-
+    private EventDecorator eventDecorator;
     private ArrayList<CalendarDay> dates = new ArrayList<>();
     private String tempDate;
     public CalendarFragment() {
@@ -136,25 +140,49 @@ public class CalendarFragment extends Fragment {
 
 
         ref = database.getReference("Schedule").child(mUid);
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addChildEventListener(new ChildEventListener() {
+            // snapshot 은 각 날짜의 Schedule 객체
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                dates.clear();
-                for(DataSnapshot snap : snapshot.getChildren()){
-                    String temp = snap.getKey();
-                    int year = Integer.parseInt(temp.substring(0,4));
-                    int month = Integer.parseInt(temp.substring(4,6));
-                    int dayy = Integer.parseInt(temp.substring(6,8));
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                String temp = snapshot.getKey();
+                int year = Integer.parseInt(temp.substring(0,4));
+                int month = Integer.parseInt(temp.substring(4,6));
+                int dayy = Integer.parseInt(temp.substring(6,8));
 
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.set(year,month-1,dayy);
-                    CalendarDay day = CalendarDay.from(calendar);
-                    dates.add(day);                }
-                if(!dates.isEmpty())
-                    materialCalendarView.addDecorators(new EventDecorator(Color.RED, dates, activity));
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(year,month-1,dayy);
+                CalendarDay day = CalendarDay.from(calendar);
+                dates.add(day);
+                eventDecorator = new EventDecorator(Color.RED, dates, activity);
+                materialCalendarView.removeDecorator(eventDecorator);
+                if(!dates.isEmpty()) {
+                    materialCalendarView.addDecorators(eventDecorator);
+                }
             }
 
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                /**
+                 * Todo 점 지우기가 안됩니다
+                 */
+                materialCalendarView.removeDecorator(eventDecorator);
+                int count= (int) snapshot.getChildrenCount();
+                if(count==1) {
+                    dates.remove(snapshot.getValue(Schedule.class));
+                    eventDecorator = new EventDecorator(Color.RED, dates, activity);
+                    materialCalendarView.addDecorator(eventDecorator);
+                }
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -180,6 +208,7 @@ public class CalendarFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_logout_btn:
+                util.signOut(FirebaseAuth.getInstance(), getActivity());
         }
         return super.onOptionsItemSelected(item);
     }
