@@ -12,6 +12,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -65,6 +68,7 @@ public class CalendarFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mUid = getArguments().getString("mUid");
         }
@@ -78,6 +82,7 @@ public class CalendarFragment extends Fragment {
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.app_toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         final ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        setHasOptionsMenu(true);
         actionBar.setTitle(Integer.toString(date.getYear()) + "년 " + Integer.toString(date.getMonth() + 1) + "월");
 
         materialCalendarView = (MaterialCalendarView) view.findViewById(R.id.calenarView);
@@ -90,6 +95,7 @@ public class CalendarFragment extends Fragment {
 
         //달력 사이즈 조절
         materialCalendarView.setTileHeightDp(50);
+
 
 
         materialCalendarView.setOnMonthChangedListener(new OnMonthChangedListener() {
@@ -148,6 +154,8 @@ public class CalendarFragment extends Fragment {
                     materialCalendarView.addDecorators(new EventDecorator(Color.RED, dates, activity));
             }
 
+
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
@@ -160,5 +168,19 @@ public class CalendarFragment extends Fragment {
         super.onAttach(context);
         if(context instanceof Activity)
             activity = (Activity) context;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_logout_btn:
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
