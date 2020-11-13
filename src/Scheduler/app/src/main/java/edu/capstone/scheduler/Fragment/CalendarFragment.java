@@ -143,8 +143,7 @@ public class CalendarFragment extends Fragment {
                     Calendar calendar = Calendar.getInstance();
                     calendar.set(year,month-1,dayy);
                     CalendarDay day = CalendarDay.from(calendar);
-                    dates.add(day);
-                }
+                    dates.add(day);                }
                 if(!dates.isEmpty())
                     materialCalendarView.addDecorators(new EventDecorator(Color.RED, dates, activity));
             }
