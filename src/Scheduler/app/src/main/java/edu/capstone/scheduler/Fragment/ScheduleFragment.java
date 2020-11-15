@@ -10,8 +10,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -71,6 +73,7 @@ public class ScheduleFragment extends Fragment {
         recyclerView.setHasFixedSize(false);
         scheduleListAdapter = new ScheduleListAdapter(list);
         recyclerView.setAdapter(scheduleListAdapter);
+
 
         ref = database.getReference("Schedule").child(mUid).child(date);
         ref.addChildEventListener(new ChildEventListener() {

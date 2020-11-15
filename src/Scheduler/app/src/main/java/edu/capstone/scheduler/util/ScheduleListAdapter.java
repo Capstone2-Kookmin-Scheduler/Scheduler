@@ -1,11 +1,14 @@
 package edu.capstone.scheduler.util;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -15,6 +18,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
+import edu.capstone.scheduler.Activity.AddSchedule;
 import edu.capstone.scheduler.Object.Date;
 import edu.capstone.scheduler.Object.Schedule;
 import edu.capstone.scheduler.R;
@@ -66,10 +70,33 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
                         Date date = schedule.getDate();
                         String dateStr = Integer.toString(date.getYear())+String.format("%02d",date.getMonth())+String.format("%02d",date.getDay());
                         ref = database.getReference("Schedule/").child(mUser.getUid()).child(dateStr).child(schedule.getUid());
-                        ref.removeValue();
-                        list.remove(pos);
-                        notifyItemRemoved(pos);
-                        notifyDataSetChanged();
+//                        ref.removeValue();
+//                        list.remove(pos);
+//                        notifyItemRemoved(pos);
+//                        notifyDataSetChanged();
+
+                        final CharSequence[] items = {"수정","삭제"};
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(view.getContext(), android.R.style.Theme_DeviceDefault_Light_Dialog_Alert);
+                        dialog.setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                switch(i){
+                                    case 0: // 수정
+                                        Intent intent = new Intent(view.getContext(), AddSchedule.class);
+                                        intent.putExtra("schedule", schedule);
+                                        view.getContext().startActivity(intent);
+
+                                        break;
+                                    case 1: // 삭제
+                                        ref.removeValue();
+                                        list.remove(pos);
+                                        notifyItemRemoved(pos);
+                                        notifyDataSetChanged();
+                                        break;
+                                }
+                            }
+                        });
+                        dialog.create().show();
                     }
                     return false;
                 }

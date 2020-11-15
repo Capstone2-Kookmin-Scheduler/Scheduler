@@ -54,7 +54,8 @@ public class AddSchedule extends BaseActivity {
     private Double departure_lat, departure_lng, arrival_lat, arrival_lng;
     private String departure_placeName, arrival_placeName;
     private int year, month, day, hour, minute;
-    private Schedule schedule;
+    private Schedule schedule  = new Schedule();
+    private String schedule_UID;
     private AlarmManager alarmManager;
     private int count = 0;
 
@@ -84,6 +85,12 @@ public class AddSchedule extends BaseActivity {
         search_departure_location = (Button) findViewById(R.id.search_departure_location);
         add_schedule = (Button) findViewById(R.id.add_schedule);
 
+        Bundle extras = getIntent().getExtras();
+        if(extras!=null) {
+            schedule = (Schedule) extras.getSerializable("schedule");
+            Log.e("log", schedule.getUid());
+            updateUI(schedule);
+        }
 
         Places.initialize(getApplicationContext(), "AIzaSyCG6NeTZ9cdyvFoz_tNIsBHMJmfCKw1vl0");
         PlacesClient placesClient = Places.createClient(this);
@@ -101,6 +108,8 @@ public class AddSchedule extends BaseActivity {
         String str_day = format_day.format(currentTime); day = Integer.parseInt(str_day);
         String str_hour = format_hour.format(currentTime); hour = Integer.parseInt(str_hour);
         String str_minute = format_minute.format(currentTime); minute = Integer.parseInt(str_minute);
+
+
 
         //set datePicker and timePicker
         datePicker.init(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(), new DatePicker.OnDateChangedListener() {
@@ -141,8 +150,8 @@ public class AddSchedule extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Date date = new Date(year, month, day, hour, minute);
-                schedule = new Schedule(schedule_name.getText().toString(), date, departure_lat, departure_lng, arrival_lat, arrival_lng, departure_placeName, arrival_placeName, 0);
-
+                schedule.setDate(date);
+                schedule.setName(schedule_name.getText().toString());
                 CalculateTime(getApplicationContext(), schedule);
             }
         });
@@ -164,6 +173,9 @@ public class AddSchedule extends BaseActivity {
                 departure_location.setText(departure_placeName);
                 departure_lat = place.getLatLng().latitude;
                 departure_lng = place.getLatLng().longitude;
+                schedule.setDeparture_lat(departure_lat);
+                schedule.setDeparture_lng(departure_lng);
+                schedule.setDeparture_location(departure_placeName);
                 Log.i("위도 경도 ", departure_lat.toString() + departure_lng.toString());
 
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
@@ -184,7 +196,9 @@ public class AddSchedule extends BaseActivity {
                 arrival_location.setText(arrival_placeName);
                 arrival_lat = place.getLatLng().latitude;
                 arrival_lng = place.getLatLng().longitude;
-
+                schedule.setArrival_lat(arrival_lat);
+                schedule.setArrival_lng(arrival_lng);
+                schedule.setArrival_location(arrival_placeName);
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
                 // TODO: Handle the error.
                 Status status = Autocomplete.getStatusFromIntent(data);
@@ -204,12 +218,16 @@ public class AddSchedule extends BaseActivity {
         alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 
         Intent intent = new Intent(AddSchedule.this, CheckLocation.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putSerializable("schedule",schedule);
         intent.putExtra("arrival_lat", schedule.getArrival_lat());
         intent.putExtra("arrival_lng", schedule.getArrival_lng());
         intent.putExtra("hour", schedule.getDate().getHour());
         intent.putExtra("minute", schedule.getDate().getMinute());
         intent.putExtra("schedule_name", schedule_name.getText().toString());
         intent.putExtra("arrival_location", schedule.getArrival_location());
+//        intent.putExtras(bundle);
+
         PendingIntent pendingIntent = PendingIntent.getBroadcast(AddSchedule.this, hour*60+minute, intent, 0);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
@@ -255,14 +273,24 @@ public class AddSchedule extends BaseActivity {
                         Date date = mSchedule.getDate();
                         String dateStr = Integer.toString(date.getYear())+String.format("%02d",date.getMonth())+String.format("%02d",date.getDay());
                         ref = database.getReference("Schedule/").child(mUser.getUid()).child(dateStr);
-                        String schedule_uid = ref.push().getKey();
-                        mSchedule.setUid(schedule_uid);
-                        Map<String,Object> childUpdates = new HashMap<>();
-                        childUpdates.put(schedule_uid,mSchedule.toMap());
-                        ref.updateChildren(childUpdates);
-                        regist(mSchedule);
-
-                        finish();
+                        if(mSchedule.getUid()==null) {
+                            Log.e("add","null");
+                            schedule_UID = ref.push().getKey();
+                            mSchedule.setUid(schedule_UID);
+                            Map<String,Object> childUpdates = new HashMap<>();
+                            childUpdates.put(schedule_UID,mSchedule.toMap());
+                            ref.updateChildren(childUpdates);
+                            regist(mSchedule);
+                            finish();
+                        }
+                        else{
+//                            Map<String,Object> childUpdates = new HashMap<>();
+//                            childUpdates.put(schedule_UID,mSchedule.toMap());
+                            Log.e("add",mSchedule.getUid());
+                            ref.child(mSchedule.getUid()).setValue(mSchedule);
+                            regist(mSchedule);
+                            finish();
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -281,6 +309,27 @@ public class AddSchedule extends BaseActivity {
         odsayService.requestSearchPubTransPath(mSchedule.getDeparture_lng().toString(), mSchedule.getDeparture_lat().toString(), mSchedule.getArrival_lng().toString(), mSchedule.getArrival_lat().toString(), "0", "0", "0", onResultCallbackListener);
     }
 
+    public void updateUI(Schedule schedule){
+        this.schedule_name.setText(schedule.getName());
+        this.arrival_location.setText(schedule.getArrival_location());
+        this.departure_location.setText(schedule.getDeparture_location()) ;
+        datePicker.init(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(), new DatePicker.OnDateChangedListener() {
+            @Override
+            public void onDateChanged(DatePicker i, int i1, int i2, int i3) {
+                datePicker = i; year = i1; month = i2+1; day = i3;
+            }
+        });
+        this.timePicker.setHour(schedule.getDate().getHour());
+        this.timePicker.setMinute(schedule.getDate().getMinute());
+
+        this.arrival_lat = schedule.getArrival_lat();
+        this.arrival_lng = schedule.getArrival_lng();
+        this.departure_lat = schedule.getDeparture_lat();
+        this.departure_lng = schedule.getDeparture_lng();
+        this.schedule_UID = schedule.getUid();
+
+
+    }
 
 
 

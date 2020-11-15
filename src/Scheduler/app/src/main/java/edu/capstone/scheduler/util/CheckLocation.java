@@ -31,6 +31,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class CheckLocation extends BroadcastReceiver {
     GpsTracker gpsTracker;
+    private Schedule schedule;
     private Double lat, lng, arrival_lat, arrival_lng;
     private int late_count, late_time;
     private int hour, minute;
@@ -48,6 +49,8 @@ public class CheckLocation extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         mContext = context;
+        //schedule = (Schedule)intent.getSerializableExtra("schedule");
+
         arrival_lat = intent.getExtras().getDouble("arrival_lat");
         arrival_lng = intent.getExtras().getDouble("arrival_lng");
         hour = intent.getExtras().getInt("hour");

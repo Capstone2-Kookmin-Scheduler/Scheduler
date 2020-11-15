@@ -2,10 +2,11 @@ package edu.capstone.scheduler.Object;
 
 import com.google.firebase.database.Exclude;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Schedule {
+public class Schedule implements Serializable {
     private String name;
     private Date date;
     private Double departure_lat;
