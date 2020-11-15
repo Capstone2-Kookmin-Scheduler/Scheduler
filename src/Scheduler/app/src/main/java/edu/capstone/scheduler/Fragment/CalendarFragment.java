@@ -6,13 +6,21 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,17 +30,21 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 
 import edu.capstone.scheduler.Activity.MainActivity;
+import edu.capstone.scheduler.Object.Schedule;
 import edu.capstone.scheduler.R;
 import edu.capstone.scheduler.util.EventDecorator;
 import edu.capstone.scheduler.util.SaturdayDecorator;
 import edu.capstone.scheduler.util.SundayDecorator;
 import edu.capstone.scheduler.util.TodayDecorator;
+import edu.capstone.scheduler.util.util;
 
 public class CalendarFragment extends Fragment {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -42,7 +54,7 @@ public class CalendarFragment extends Fragment {
     private String mUid;
     MaterialCalendarView materialCalendarView;
     final TodayDecorator todayDecorator = new TodayDecorator();
-
+    private EventDecorator eventDecorator;
     private ArrayList<CalendarDay> dates = new ArrayList<>();
     private String tempDate;
     public CalendarFragment() {
@@ -60,6 +72,7 @@ public class CalendarFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mUid = getArguments().getString("mUid");
         }
@@ -69,13 +82,34 @@ public class CalendarFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
+        CalendarDay date = new CalendarDay();
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.app_toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        final ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        setHasOptionsMenu(true);
+        actionBar.setTitle(Integer.toString(date.getYear()) + "년 " + Integer.toString(date.getMonth() + 1) + "월");
 
         materialCalendarView = (MaterialCalendarView) view.findViewById(R.id.calenarView);
         materialCalendarView.state().edit()
                 .setFirstDayOfWeek(Calendar.SUNDAY)
                 .setCalendarDisplayMode(CalendarMode.MONTHS)
                 .commit();
+        //타이틀 안보이게
+        materialCalendarView.setTopbarVisible(false);
 
+        //달력 사이즈 조절
+        materialCalendarView.setTileHeightDp(50);
+
+
+
+        materialCalendarView.setOnMonthChangedListener(new OnMonthChangedListener() {
+            @Override
+            public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
+                SimpleDateFormat df = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+                if (null != actionBar)
+                    actionBar.setTitle(Integer.toString(date.getYear()) + "년 " + Integer.toString(date.getMonth() + 1) + "월");
+            }
+        });
 
         materialCalendarView.addDecorators(new SundayDecorator(), new SaturdayDecorator(), todayDecorator);
         //날짜 클릭시 일정 출력
@@ -106,22 +140,47 @@ public class CalendarFragment extends Fragment {
 
 
         ref = database.getReference("Schedule").child(mUid);
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addChildEventListener(new ChildEventListener() {
+            // snapshot 은 각 날짜의 Schedule 객체
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                dates.clear();
-                for(DataSnapshot snap : snapshot.getChildren()){
-                    String temp = snap.getKey();
-                    int year = Integer.parseInt(temp.substring(0,4));
-                    int month = Integer.parseInt(temp.substring(4,6));
-                    int dayy = Integer.parseInt(temp.substring(6,8));
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                String temp = snapshot.getKey();
+                int year = Integer.parseInt(temp.substring(0,4));
+                int month = Integer.parseInt(temp.substring(4,6));
+                int dayy = Integer.parseInt(temp.substring(6,8));
 
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.set(year,month-1,dayy);
-                    CalendarDay day = CalendarDay.from(calendar);
-                    dates.add(day);
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(year,month-1,dayy);
+                CalendarDay day = CalendarDay.from(calendar);
+                dates.add(day);
+                eventDecorator = new EventDecorator(Color.RED, dates, activity);
+                materialCalendarView.removeDecorator(eventDecorator);
+                if(!dates.isEmpty()) {
+                    materialCalendarView.addDecorators(eventDecorator);
                 }
-                materialCalendarView.addDecorators(new EventDecorator(Color.RED, dates, activity));
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                /**
+                 * Todo 점 지우기가 안됩니다
+                 */
+                materialCalendarView.removeDecorator(eventDecorator);
+                int count= (int) snapshot.getChildrenCount();
+                if(count==1) {
+                    dates.remove(snapshot.getValue(Schedule.class));
+                    eventDecorator = new EventDecorator(Color.RED, dates, activity);
+                    materialCalendarView.addDecorator(eventDecorator);
+                }
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
             }
 
@@ -132,11 +191,25 @@ public class CalendarFragment extends Fragment {
         });
         return view;
     }
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if(context instanceof Activity)
             activity = (Activity) context;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_logout_btn:
+                util.signOut(FirebaseAuth.getInstance(), getActivity());
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

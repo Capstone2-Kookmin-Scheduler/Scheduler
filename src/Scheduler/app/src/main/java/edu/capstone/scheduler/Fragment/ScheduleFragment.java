@@ -20,11 +20,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.capstone.scheduler.Activity.MainActivity;
 import edu.capstone.scheduler.Object.Schedule;
 import edu.capstone.scheduler.R;
 import edu.capstone.scheduler.util.ScheduleListAdapter;
@@ -105,23 +105,6 @@ public class ScheduleFragment extends Fragment {
             }
         });
 
-//        ref.child(date).addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                list.clear();
-//
-//                for(DataSnapshot item : snapshot.getChildren()) {
-//                    Schedule schedule = item.getValue(Schedule.class);
-//                    list.add(schedule);
-//                    scheduleListAdapter.notifyDataSetChanged();
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
         return view;
     }
 }

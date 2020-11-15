@@ -20,6 +20,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineCallback;
 import com.mapbox.android.core.location.LocationEngineProvider;
@@ -60,6 +62,7 @@ import com.odsay.odsayandroidsdk.OnResultCallbackListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -98,12 +101,14 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
     private ShowMapActivityLocationCallback callback = new ShowMapActivityLocationCallback(this);
     private LocationEngine locationEngine;
 
-    private TextView information;
+    private TextView information = null;
     private MapView mapView;
     private MapboxMap mapboxMap;
     private PermissionsManager permissionsManager;
     private MarkerView markerView;
     private MarkerViewManager markerViewManager;
+    private TextView titleTextView;
+    private TextView snippetTextView;
 
     private MapboxDirections client;
     private static DirectionsRoute currentRoute;
@@ -133,9 +138,11 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
         find_route_with_odsay(getApplicationContext());
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
+        information = (TextView) findViewById(R.id.information);
 
-        Log.e("latlng", "는 " + lat + "      " + lng);
         mapView.getMapAsync(this);
+        NetworkTask task = new NetworkTask();
+        task.execute(lat,lng,destination.latitude(),destination.longitude());
 
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         nm.cancel(NOTI_ID);
@@ -149,15 +156,7 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 // 버스정류장/지하철역 마커뷰 표시
-                markerViewManager = new MarkerViewManager(mapView, ShowMapActivity.this.mapboxMap);
-                View customView = LayoutInflater.from(ShowMapActivity.this).inflate(R.layout.marker_view, null);
-                customView.setLayoutParams(new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
-                TextView titleTextView = customView.findViewById(R.id.marker_window_title);
-                titleTextView.setText("제목");
-                TextView snippetTextView = customView.findViewById(R.id.marker_window_snippet);
-                snippetTextView.setText("내용");
-                markerView = new MarkerView(new LatLng(destination.latitude(), destination.longitude()), customView);
-                markerViewManager.addMarker(markerView);
+
 
                 LocalizationPlugin localizationPlugin = new LocalizationPlugin(mapView, ShowMapActivity.this.mapboxMap, style);
                 enableLocationComponent(style);
@@ -215,8 +214,6 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
 
     //Point.fromLngLat()로 파라미터 넣기
     private void getRoute(Point origin, Point destination) { // 지도상 경로 받아오기
-        Log.e("경로의 첫", origin.toString());
-        Log.e("경로의 끝", destination.toString());
         client = MapboxDirections.builder()
                 .origin(origin)//출발지 위도 경도
                 .destination(destination)//도착지 위도 경도
@@ -401,12 +398,12 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
 
     }
 
-    private String find_route() {
+    private String find_route(Double lat1, Double lng1, Double lat2, Double lng2) {
         HttpURLConnection urlConnection = null;
         StringBuffer stringBuffer = new StringBuffer();
 
-        String address = "https://maps.googleapis.com/maps/api/directions/json?origin=" + lat + "," + lng +
-                "&destination=" + destination.latitude() + "," + destination.longitude() + "&mode=transit&departure_time=now&language=ko&key=AIzaSyCG6NeTZ9cdyvFoz_tNIsBHMJmfCKw1vl0" ;
+        String address = "https://maps.googleapis.com/maps/api/directions/json?origin=" + lat1 + "," + lng1 +
+                "&destination=" + lat2 + "," + lng2 + "&mode=transit&departure_time=now&language=ko&key=AIzaSyCG6NeTZ9cdyvFoz_tNIsBHMJmfCKw1vl0" ;
         String address1 = "https://maps.googleapis.com/maps/api/directions/json?origin=37.5728359,126.9746922&destination=37.5129907,127.1005382&mode=transit&departure_time=now&language=ko&key=AIzaSyCG6NeTZ9cdyvFoz_tNIsBHMJmfCKw1vl0";
 
         try {
@@ -442,6 +439,17 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
         return null;
     } // end of find_route method
 
+    public String transJson(String information) {
+        String json = information;
+        JsonParser parser = new JsonParser();
+        JsonElement element = parser.parse(json);
+
+        String time = element.getAsJsonObject().get("routes").getAsJsonArray().get(0).getAsJsonObject().get("legs").getAsJsonArray().get(0).getAsJsonObject().get("duration").getAsJsonObject().get("text").getAsString();
+        Log.e("제이슨제이슨", time);
+
+        return time;
+
+    }
     private void find_route_with_odsay(Context context){
         ODsayService odsayService = ODsayService.init(context,"suLGma46yOIqhKYbRFlIXAWLeDWumTQqfmY0RJ+ZnvE");
         odsayService.setReadTimeout(5000);
@@ -452,8 +460,9 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
             public void onSuccess(ODsayData odsayData, API api) {
                 if(api == API.SEARCH_PUB_TRANS_PATH){
                     try {
+                        int count = 0;
                         JSONArray jsonArray = odsayData.getJson().getJSONObject("result").getJSONArray("path").getJSONObject(1).getJSONArray("subPath");
-                        String startName = null; String endName = null;
+                        String startName = null; String endName = null; String code = null; String route = "";
                         //get firstStation Location with latitude and longitude
                         for (int i = 0; i<jsonArray.length(); i++) {
                             int type = jsonArray.getJSONObject(i).getInt("trafficType");
@@ -468,14 +477,37 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
                         }
                         //get path with station names
                         for (int i = 0; i<jsonArray.length(); i++){
+
                             int type = jsonArray.getJSONObject(i).getInt("trafficType");
                             if (type == 3) continue;
-                            else {
+                            else if (type == 1){
+                                count++;
+                                code = "지하철역 " + jsonArray.getJSONObject(i).getJSONArray("lane").getJSONObject(0).getString("name");
                                 startName = jsonArray.getJSONObject(i).getString("startName");
                                 endName = jsonArray.getJSONObject(i).getString("endName");
                             }
-                            Log.i("출발 목적지", startName+endName);
+                            else if (type == 2){
+                                count++;
+                                code = "버스정류장 " + jsonArray.getJSONObject(i).getJSONArray("lane").getJSONObject(0).getString("busNo");
+                                startName = jsonArray.getJSONObject(i).getString("startName");
+                                endName = jsonArray.getJSONObject(i).getString("endName");
+                            }
+                            if(count==1){
+                                markerViewManager = new MarkerViewManager(mapView, ShowMapActivity.this.mapboxMap);
+                                View customView = LayoutInflater.from(ShowMapActivity.this).inflate(R.layout.marker_view, null);
+                                customView.setLayoutParams(new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
+                                titleTextView = customView.findViewById(R.id.marker_window_title);
+                                snippetTextView = customView.findViewById(R.id.marker_window_snippet);
+                                titleTextView.setText(code);
+                                snippetTextView.setText(startName);
+                                markerView = new MarkerView(new LatLng(destination.latitude(), destination.longitude()), customView);
+                                markerViewManager.addMarker(markerView);
+                            }
+
+
+                            route += code + " - " + startName + " ---> " + endName + "\n";
                         }
+                        information.setText(route);
 
 //                        int time = jsonArray.getJSONObject(1).getJSONObject("info").getInt("totalTime");
 //                        Log.i("예상 소요시간 ", Integer.toString(time));
@@ -503,18 +535,19 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
 
 
 
-    class NetworkTask extends AsyncTask<Void, Void, String> {
+    class NetworkTask extends AsyncTask<Double, Void, String> {
         @Override
-        protected String doInBackground(Void... voids) {
+        protected String doInBackground(Double... latlng) {
             String result;
-            result = find_route();
-            return result;
+            result = find_route(latlng[0],latlng[1],latlng[2],latlng[3]);
+            String time =  transJson(result);
+            return time;
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            information.setText(s);
+            //information.setText(s);
         }
     }
 
