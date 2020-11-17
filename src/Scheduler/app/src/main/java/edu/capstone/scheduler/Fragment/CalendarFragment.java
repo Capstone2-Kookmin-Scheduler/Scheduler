@@ -211,9 +211,11 @@ public class CalendarFragment extends Fragment {
         switch (item.getItemId()){
             case R.id.action_logout_btn:
                 util.signOut(FirebaseAuth.getInstance(), getActivity());
+                break;
             case R.id.action_add_btn:
                 Intent intent = new Intent(getActivity(), AddSchedule.class);
                 startActivity(intent);
+                break;
 
         }
         return super.onOptionsItemSelected(item);

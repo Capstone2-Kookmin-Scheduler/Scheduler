@@ -451,7 +451,7 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
 
     }
     private void find_route_with_odsay(Context context){
-        ODsayService odsayService = ODsayService.init(context,"suLGma46yOIqhKYbRFlIXAWLeDWumTQqfmY0RJ+ZnvE");
+        ODsayService odsayService = ODsayService.init(context,context.getString(R.string.odsay_api_key));
         odsayService.setReadTimeout(5000);
         odsayService.setConnectionTimeout(5000);
 

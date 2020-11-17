@@ -58,7 +58,7 @@ public class CheckLocation extends BroadcastReceiver {
         schedule_name = intent.getStringExtra("schedule_name");
         arrival_location = intent.getStringExtra("arrival_location");
 
-        ODsayService odsayService = ODsayService.init(context,"suLGma46yOIqhKYbRFlIXAWLeDWumTQqfmY0RJ+ZnvE");
+        ODsayService odsayService = ODsayService.init(context,context.getString(R.string.odsay_api_key));
         odsayService.setReadTimeout(5000);
         odsayService.setConnectionTimeout(5000);
 

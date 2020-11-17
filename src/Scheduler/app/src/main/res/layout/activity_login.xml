@@ -29,7 +29,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:hint="     비밀번호 (최소 6자리)         "
-        android:id="@+id/password_editText"/>
+        android:id="@+id/password_editText"
+        android:inputType="textPassword"/>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

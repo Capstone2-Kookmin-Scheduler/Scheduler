@@ -92,7 +92,7 @@ public class AddSchedule extends BaseActivity {
             updateUI(schedule);
         }
 
-        Places.initialize(getApplicationContext(), "AIzaSyCG6NeTZ9cdyvFoz_tNIsBHMJmfCKw1vl0");
+        Places.initialize(getApplicationContext(), getString(R.string.place_api_key));
         PlacesClient placesClient = Places.createClient(this);
 
         // initialize currentDate
@@ -257,7 +257,7 @@ public class AddSchedule extends BaseActivity {
 
     private void CalculateTime(Context context, Schedule schedule){
         Schedule mSchedule = schedule;
-        ODsayService odsayService = ODsayService.init(context,"suLGma46yOIqhKYbRFlIXAWLeDWumTQqfmY0RJ+ZnvE");
+        ODsayService odsayService = ODsayService.init(context,getString(R.string.odsay_api_key));
         odsayService.setReadTimeout(5000);
         odsayService.setConnectionTimeout(5000);
 
