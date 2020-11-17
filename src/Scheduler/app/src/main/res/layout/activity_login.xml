@@ -5,30 +5,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:weightSum="2"
+    android:background="@color/white"
     tools:context=".Activity.LoginActivity">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="5"
+
+        android:src="@drawable/login_img" />
+
+
+    <EditText
+        android:id="@+id/email_editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:hint="              Email 형식 ID             " />
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Email 형식 ID"
-        android:id="@+id/email_editText"/>
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="비밀번호 (최소 6자리)"
+        android:layout_gravity="center"
+        android:hint="     비밀번호 (최소 6자리)         "
         android:id="@+id/password_editText"/>
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        >
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="로그인"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:id="@+id/login_button"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="회원가입"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:id="@+id/signup_button"/>
     </LinearLayout>
 

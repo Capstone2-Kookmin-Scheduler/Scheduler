@@ -3,36 +3,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activity.MainActivity"
+    android:background="#FFFFFF"
     android:orientation="vertical"
-    android:weightSum="1">
+    android:weightSum="1"
+    tools:context=".Activity.MainActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.55"
-        >
+        android:layout_weight="0.55">
+
         <LinearLayout
+            android:id="@+id/calendarFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/calendarFragment"
             android:orientation="horizontal" />
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/plusbtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
-            android:src="@drawable/ic_action_name_plus"
-            android:backgroundTint="#48A4ED"/>
+            android:backgroundTint="#48A4ED"
+            android:src="@drawable/ic_action_name_plus" />
     </FrameLayout>
 
 
     <FrameLayout
+        android:id="@+id/scheduleFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.45"
-        android:id="@+id/scheduleFragment"
-        />
+        android:background="#FFFFFF" />
 
 
 </LinearLayout>

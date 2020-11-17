@@ -2,19 +2,36 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_gravity="left"
+    android:background="@color/white"
+    android:layout_marginLeft="30dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:layout_marginBottom="20dp"
+        android:text = "회원가입"
+        android:textStyle="bold"
+        android:textColor="@color/black_semi_transparent"
+        android:textSize="30dp"/>
+
+
+
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text = "ID  "/>
+            android:text = "아이디     "/>
         <EditText
             android:id="@+id/id_signup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="ID 입력(email)"
+            android:hint="ID 입력(email)                  "
             android:inputType="textWebEmailAddress"
             />
 
@@ -25,7 +42,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text = "PW  "/>
+            android:text = "비밀번호 "/>
         <EditText
             android:id="@+id/pw_signup"
             android:layout_width="wrap_content"
@@ -40,21 +57,25 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text = "이름  "/>
+            android:text = "이름         "/>
         <EditText
             android:id="@+id/name_signup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="이름 입력"
+            android:hint="이름 입력                           "
             android:inputType="text"
             android:maxLines="1"/>
     </LinearLayout>
 
     <Button
         android:id="@+id/signupFinishBtn"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="확인">
+        android:background="@color/color_green"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="30dp"
+        android:text="회원가입"
+        android:textStyle="bold">
     </Button>
 
 </LinearLayout>
