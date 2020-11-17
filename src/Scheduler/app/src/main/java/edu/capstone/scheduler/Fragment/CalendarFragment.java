@@ -2,6 +2,7 @@ package edu.capstone.scheduler.Fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
+import edu.capstone.scheduler.Activity.AddSchedule;
 import edu.capstone.scheduler.Activity.MainActivity;
 import edu.capstone.scheduler.Object.Schedule;
 import edu.capstone.scheduler.R;
@@ -209,7 +211,13 @@ public class CalendarFragment extends Fragment {
         switch (item.getItemId()){
             case R.id.action_logout_btn:
                 util.signOut(FirebaseAuth.getInstance(), getActivity());
+            case R.id.action_add_btn:
+                Intent intent = new Intent(getActivity(), AddSchedule.class);
+                startActivity(intent);
+
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 }

@@ -55,16 +55,6 @@ public class MainActivity extends BaseActivity {
         fragmentTransaction.replace(R.id.scheduleFragment,scheduleFragment);
         fragmentTransaction.commit();
 
-        FloatingActionButton plusbtn =  findViewById(R.id.plusbtn);
-
-        plusbtn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Intent intent = new Intent(getApplicationContext(), AddSchedule.class);
-                startActivity(intent);
-            }
-        });
-
     }
     public void replaceSchedule(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();

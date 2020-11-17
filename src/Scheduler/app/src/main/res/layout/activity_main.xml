@@ -19,13 +19,6 @@
             android:layout_height="match_parent"
             android:orientation="horizontal" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/plusbtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:backgroundTint="#48A4ED"
-            android:src="@drawable/ic_action_name_plus" />
     </FrameLayout>
 
 
