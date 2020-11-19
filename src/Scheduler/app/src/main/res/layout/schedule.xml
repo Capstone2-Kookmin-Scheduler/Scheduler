@@ -2,7 +2,7 @@
 
 <LinearLayout
     android:background="@android:color/white"
-    android:layout_marginBottom="8dp"
+    android:layout_marginBottom="4dp"
     android:gravity="center_vertical"
     android:padding="4dp"
     android:layout_height="wrap_content"
@@ -10,26 +10,43 @@
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:weightSum = "1">
-
-
-
-
-    <TextView
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:textSize="15sp"
-        android:text="제목"
-        android:includeFontPadding="false"
-        android:id="@+id/textView1"/>
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="1">
         <TextView
+            android:paddingLeft="5dp"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:textSize="15sp"
+            android:text="제목"
+            android:includeFontPadding="false"
+            android:id="@+id/textView1"/>
+        <TextView
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:textColor="@color/color_green"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:text="예상 출발 시간"
+            android:includeFontPadding="false"
+            />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_marginTop="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1">
+        <TextView
+            android:paddingLeft="5dp"
             android:layout_height="wrap_content"
             android:layout_width="0dp"
             android:layout_weight="0.5"
@@ -47,6 +64,7 @@
             android:textSize="13sp"
             android:text="소요시간"
             android:includeFontPadding="false"
+            android:gravity="center"
             android:id="@+id/textView3"/>
     </LinearLayout>
 

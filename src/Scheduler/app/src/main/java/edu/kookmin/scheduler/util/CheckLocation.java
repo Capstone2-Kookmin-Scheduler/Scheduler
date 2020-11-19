@@ -116,10 +116,10 @@ public class CheckLocation extends BroadcastReceiver {
         // 알림 형식 설정
         noti = new NotificationCompat.Builder(context, NOTI_CHNNEL_ID)
                 .setDefaults(Notification.DEFAULT_LIGHTS)
-                .setContentTitle("예상출발시간 : " + util.calculateDepartureTime(hour,minute, total_time))
+                .setContentTitle("예상 출발시간 - " + util.calculateDepartureTime(hour,minute, total_time))
                 .setContentIntent(notiPendingIntent)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentText("도착지 : "+ arrival_location)
+                .setSmallIcon(R.mipmap.calendar_icon)
+                .setContentText("목적지 - "+ arrival_location)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
                 .build();
