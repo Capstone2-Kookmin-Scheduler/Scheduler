@@ -1,5 +1,8 @@
 package edu.kookmin.scheduler.util;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -32,11 +35,13 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
     public ScheduleListAdapter(List<Schedule> list) {
         this.list = list;
     }
+    private Context mContext;
 
     @NonNull
     @Override
     public RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.schedule, parent, false);
+        mContext = parent.getContext();
         return new RecyclerViewHolder(view);
     }
 
@@ -77,6 +82,7 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
                     intent.putExtra("lng",lng);
                     intent.putExtra("arrival_lat",list.get(pos).getArrival_lat());
                     intent.putExtra("arrival_lng",list.get(pos).getArrival_lng());
+                    intent.putExtra("isNoti",false);
                     view.getContext().startActivity(intent);
                 }
             });
@@ -106,6 +112,8 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
                                     case 1: // 삭제
                                         ref.removeValue();
                                         list.remove(pos);
+                                        int id = schedule.getDate().getHour()*60 + schedule.getDate().getMinute();
+                                        util.removeAlarm(mContext, id);
                                         notifyItemRemoved(pos);
                                         notifyDataSetChanged();
                                         break;

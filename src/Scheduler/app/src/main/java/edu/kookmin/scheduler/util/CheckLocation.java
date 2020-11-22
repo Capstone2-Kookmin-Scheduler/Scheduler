@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -51,8 +52,9 @@ public class CheckLocation extends BroadcastReceiver {
     private int hour, minute;
     private String schedule_name;
     private String arrival_location;
-    private String date;
+    private String dateStr;
     private String schedule_uid;
+    private Schedule schedule;
 
     private NotificationManager notificationManager;
     private Notification noti;
@@ -68,18 +70,22 @@ public class CheckLocation extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         mContext = context;
-        //schedule = (Schedule)intent.getSerializableExtra("schedule");
 
-        arrival_lat = intent.getExtras().getDouble("arrival_lat");
-        arrival_lng = intent.getExtras().getDouble("arrival_lng");
-        hour = intent.getExtras().getInt("hour");
-        minute = intent.getExtras().getInt("minute");
-        schedule_name = intent.getStringExtra("schedule_name");
-        arrival_location = intent.getStringExtra("arrival_location");
-        mUid = intent.getStringExtra("mUid");
-        date = intent.getStringExtra("date");
-        schedule_uid = intent.getStringExtra("schedule_uid");
-        ref = database.getReference("Schedule").child(mUid).child(date).child(schedule_uid).child("total_time");
+        Bundle bundle = intent.getExtras();
+
+        arrival_lat = bundle.getDouble("arrival_lat");
+        arrival_lng = bundle.getDouble("arrival_lng");
+        hour = bundle.getInt("hour");
+        minute = bundle.getInt("minute");
+        schedule_name = bundle.getString("schedule_name");
+        arrival_location = bundle.getString("arrival_location");
+        mUid = bundle.getString("mUid");
+        dateStr = bundle.getString("dateStr");
+        schedule_uid =bundle.getString("schedule_uid");
+        Log.e("add",mUid);
+        Log.e("add",dateStr);
+        Log.e("add",schedule_uid);
+        ref = database.getReference("Schedule").child(mUid).child(dateStr).child(schedule_uid).child("total_time");
 
         gpsTracker = new GpsTracker(context);
         lat = gpsTracker.getLat();
@@ -111,6 +117,7 @@ public class CheckLocation extends BroadcastReceiver {
         notiClickIntent.putExtra("lng",lng);
         notiClickIntent.putExtra("arrival_lat",arrival_lat);
         notiClickIntent.putExtra("arrival_lng",arrival_lng);
+        notiClickIntent.putExtra("isNoti",true);
 
         PendingIntent notiPendingIntent = PendingIntent.getActivity(context, NOTI_ID, notiClickIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         // 알림 형식 설정

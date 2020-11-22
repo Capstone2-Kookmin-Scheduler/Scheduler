@@ -115,7 +115,7 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
     private Double lng;
     private Point origin;
     private Point destination;
-
+    private boolean isNoti;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,17 +130,18 @@ public class ShowMapActivity extends BaseActivity implements OnMapReadyCallback,
             lng = extras.getDouble("lng");
             origin = Point.fromLngLat(lng, lat);
             destination = Point.fromLngLat(extras.getDouble("arrival_lng"), extras.getDouble("arrival_lat"));
+            isNoti = extras.getBoolean("isNoti");
         }
         find_route_with_odsay(getApplicationContext());
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         information = (TextView) findViewById(R.id.information);
 
+        if(isNoti==true){ // 알림을 통해서 들어왔으면 notifaction 없애기.
+            NotificationManager nm = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            nm.cancel(NOTI_ID);
+        }
         mapView.getMapAsync(this);
-
-
-        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        nm.cancel(NOTI_ID);
     }
 
     @Override

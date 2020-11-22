@@ -1,6 +1,9 @@
 package edu.kookmin.scheduler.util;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
@@ -33,6 +36,13 @@ public class util {
         h = sum / 60; m = sum % 60;
         String mStr = String.format("%02d",m);
         return (h + " : " + mStr);
+    }
+
+    public static void removeAlarm(Context context,int id){
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        Intent mIntent = new Intent(context, CheckLocation.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, mIntent, 0);
+        alarmManager.cancel(pendingIntent);
     }
 
 }

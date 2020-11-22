@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TimePicker;
 
 import com.google.android.gms.common.api.Status;
@@ -45,6 +46,7 @@ import edu.kookmin.scheduler.util.CheckLocation;
 import edu.kookmin.scheduler.Object.Date;
 import edu.kookmin.scheduler.Object.Schedule;
 import edu.kookmin.scheduler.R;
+import edu.kookmin.scheduler.util.util;
 
 /**
  * 일정 추가 액티비티.
@@ -58,7 +60,8 @@ public class AddSchedule extends BaseActivity {
     private EditText schedule_name, arrival_location, departure_location;
     private TimePicker timePicker;
     private DatePicker datePicker;
-    private Button search_location, add_schedule, search_departure_location;
+    private ImageButton search_location, search_departure_location;
+    private Button add_schedule;
     private Double departure_lat, departure_lng, arrival_lat, arrival_lng;
     private String departure_placeName, arrival_placeName;
     private int year, month, day, hour, minute;
@@ -75,7 +78,7 @@ public class AddSchedule extends BaseActivity {
     private FirebaseUser mUser;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref;
-
+    private Date originDate;
 
 
     @Override
@@ -89,16 +92,11 @@ public class AddSchedule extends BaseActivity {
         departure_location = (EditText) findViewById(R.id.departure_location);
         timePicker = (TimePicker) findViewById(R.id.schedule_time);
         datePicker = (DatePicker) findViewById(R.id.schedule_date);
-        search_location = (Button) findViewById(R.id.search_location);
-        search_departure_location = (Button) findViewById(R.id.search_departure_location);
+        search_location = (ImageButton) findViewById(R.id.search_location);
+        search_departure_location = (ImageButton) findViewById(R.id.search_departure_location);
         add_schedule = (Button) findViewById(R.id.add_schedule);
 
-        Bundle extras = getIntent().getExtras();
-        if(extras!=null) {
-            schedule = (Schedule) extras.getSerializable("schedule");
-            Log.e("log", schedule.getUid());
-            updateUI(schedule);
-        }
+
 
         //google Places 초기화
         Places.initialize(getApplicationContext(), getString(R.string.place_api_key));
@@ -134,6 +132,15 @@ public class AddSchedule extends BaseActivity {
                 hour = i; minute = i1;
             }
         });
+
+        Bundle extras = getIntent().getExtras();
+        if(extras!=null) {
+            schedule = (Schedule) extras.getSerializable("schedule");
+            originDate = schedule.getDate();
+            Log.e("originDate","월일"+originDate.getMonth() + originDate.getDay());
+            Log.e("log", schedule.getUid());
+            updateUI(schedule);
+        }
 
         // set location
         search_departure_location.setOnClickListener(new View.OnClickListener() {
@@ -231,30 +238,41 @@ public class AddSchedule extends BaseActivity {
         String dateStr = Integer.toString(schedule.getDate().getYear())+String.format("%02d",schedule.getDate().getMonth())+String.format("%02d",schedule.getDate().getDay());
         Intent intent = new Intent(AddSchedule.this, CheckLocation.class);
 
-        intent.putExtra("schedule_uid",schedule.getUid());
-        intent.putExtra("date", dateStr);
-        intent.putExtra("arrival_lat", schedule.getArrival_lat());
-        intent.putExtra("arrival_lng", schedule.getArrival_lng());
-        intent.putExtra("hour", schedule.getDate().getHour());
-        intent.putExtra("minute", schedule.getDate().getMinute());
-        intent.putExtra("schedule_name", schedule_name.getText().toString());
-        intent.putExtra("arrival_location", schedule.getArrival_location());
-        intent.putExtra("mUid", mUser.getUid());
+        Bundle bundle = new Bundle();
+        bundle.putString("schedule_uid",schedule.getUid());
+        bundle.putString("dateStr", dateStr);
+        bundle.putDouble("arrival_lat", schedule.getArrival_lat());
+        bundle.putDouble("arrival_lng", schedule.getArrival_lng());
+        bundle.putInt("hour", schedule.getDate().getHour());
+        bundle.putInt("minute", schedule.getDate().getMinute());
+        bundle.putString("schedule_name", schedule_name.getText().toString());
+        bundle.putString("arrival_location", schedule.getArrival_location());
+        bundle.putString("mUid", mUser.getUid());
 
+        intent.putExtras(bundle);
+        int id = schedule.getDate().getHour()*60 + schedule.getDate().getMinute();
         // pendingIntent 를 통한 broadcast
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(AddSchedule.this, hour*60+minute, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(AddSchedule.this, id, intent, 0);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             //hour = timePicker.getHour();
             //minute = timePicker.getMinute();
         }
 
+
+        // Calendar Instance
+        Calendar calendar = Calendar.getInstance();
+
         /**
          * TODO : 한시간 전 실행 아님, 약속시간 - 소요시간 - 20분
          * Todo 날짜별로도 해야됨.
          */
-        // Calendar Instance
-        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR,year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+
+        Log.e("날짜","날짜" + year + month + day);
+
         calendar.set(Calendar.HOUR_OF_DAY, hour-1); //  한시간 전 실행
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.SECOND, 0);
@@ -265,15 +283,20 @@ public class AddSchedule extends BaseActivity {
 
     } // end of regist
 
-    public void unregist(View view) {
-        Intent intent = new Intent(AddSchedule.this, CheckLocation.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, count, intent, 0);
-        alarmManager.cancel(pendingIntent);
-    } //unRegist
 
     // ODSayLab 통해 예상 출발지에서 도착지 까지의 소요시간 계산 후 Schedule  객체 형태로 DB 저장
     private void CalculateTime(Context context, Schedule schedule){
         Schedule mSchedule = schedule;
+
+
+        if(mSchedule.getUid()!=null) {
+            String originStr = Integer.toString(originDate.getYear())+String.format("%02d",originDate.getMonth())+String.format("%02d",originDate.getDay());
+            ref = database.getReference("Schedule/").child(mUser.getUid()).child(originStr).child(mSchedule.getUid());
+            ref.removeValue();
+            int id = mSchedule.getDate().getHour()*60 + mSchedule.getDate().getMinute();
+            util.removeAlarm(context, id);
+        }
+
         ODsayService odsayService = ODsayService.init(context,getString(R.string.odsay_api_key));
         odsayService.setReadTimeout(5000);
         odsayService.setConnectionTimeout(5000);
@@ -285,27 +308,19 @@ public class AddSchedule extends BaseActivity {
                     try {
                         JSONArray jsonArray = odsayData.getJson().getJSONObject("result").getJSONArray("path");
                         int time = jsonArray.getJSONObject(1).getJSONObject("info").getInt("totalTime");
-                        Log.i("예상 소요시간 ", Integer.toString(time));
                         mSchedule.setTotal_time(time);
                         Date date = mSchedule.getDate();
                         String dateStr = Integer.toString(date.getYear())+String.format("%02d",date.getMonth())+String.format("%02d",date.getDay());
                         ref = database.getReference("Schedule/").child(mUser.getUid()).child(dateStr);
-                        if(mSchedule.getUid()==null) {
-                            Log.e("add","null");
-                            schedule_UID = ref.push().getKey();
-                            mSchedule.setUid(schedule_UID);
-                            Map<String,Object> childUpdates = new HashMap<>();
-                            childUpdates.put(schedule_UID,mSchedule.toMap());
-                            ref.updateChildren(childUpdates);
-                            regist(mSchedule);
-                            finish();
-                        }
-                        else{
-                            Log.e("add",mSchedule.getUid());
-                            ref.child(mSchedule.getUid()).setValue(mSchedule);
-                            regist(mSchedule);
-                            finish();
-                        }
+
+                        schedule_UID = ref.push().getKey();
+                        mSchedule.setUid(schedule_UID);
+                        Map<String,Object> childUpdates = new HashMap<>();
+                        childUpdates.put(schedule_UID,mSchedule.toMap());
+                        ref.updateChildren(childUpdates);
+                        Log.e("mSchedule", mSchedule.getUid());
+                        regist(mSchedule);
+                        finish();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
