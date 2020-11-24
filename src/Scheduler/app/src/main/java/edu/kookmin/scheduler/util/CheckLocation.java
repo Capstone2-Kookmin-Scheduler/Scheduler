@@ -89,8 +89,6 @@ public class CheckLocation extends BroadcastReceiver {
         gpsTracker = new GpsTracker(context);
         lat = gpsTracker.getLat();
         lng = gpsTracker.getLng();
-        Log.d("위도 경도 ", lat.toString() + " " + lng.toString());
-        Log.d("시간체크","hour : "+ hour+" minute : "+minute);
 
         NetworkTask task = new NetworkTask();
         task.execute(lat,lng,arrival_lat,arrival_lng);

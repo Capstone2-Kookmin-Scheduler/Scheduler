@@ -38,6 +38,7 @@
         <activity android:name="edu.kookmin.scheduler.Activity.ShowMapActivity"/>
 
         <receiver android:name="edu.kookmin.scheduler.util.CheckLocation" />
+        <receiver android:name="edu.kookmin.scheduler.util.CheckLate"/>
 
     </application>
 

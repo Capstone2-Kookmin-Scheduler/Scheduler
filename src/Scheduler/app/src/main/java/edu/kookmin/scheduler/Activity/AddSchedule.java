@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.kookmin.scheduler.util.CheckLate;
 import edu.kookmin.scheduler.util.CheckLocation;
 import edu.kookmin.scheduler.Object.Date;
 import edu.kookmin.scheduler.Object.Schedule;
@@ -67,7 +68,6 @@ public class AddSchedule extends BaseActivity {
     private int year, month, day, hour, minute;
     private Schedule schedule  = new Schedule();
     private String schedule_UID;
-    private AlarmManager alarmManager;
     private int count = 0;
 
     private static int AUTOCOMPLETE_REQUEST_CODE_DEPARTURE = 1;
@@ -170,6 +170,7 @@ public class AddSchedule extends BaseActivity {
                 schedule.setDate(date);
                 schedule.setName(schedule_name.getText().toString());
                 CalculateTime(getApplicationContext(), schedule);
+
             }
         });
 
@@ -233,11 +234,12 @@ public class AddSchedule extends BaseActivity {
 
     // set AlarmManger with context
     public void regist(Schedule schedule) {
-        count++;
-        alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        AlarmManager lateAlarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
         String dateStr = Integer.toString(schedule.getDate().getYear())+String.format("%02d",schedule.getDate().getMonth())+String.format("%02d",schedule.getDate().getDay());
         Intent intent = new Intent(AddSchedule.this, CheckLocation.class);
-
+        Intent lateIntent = new Intent(AddSchedule.this, CheckLate.class);
         Bundle bundle = new Bundle();
         bundle.putString("schedule_uid",schedule.getUid());
         bundle.putString("dateStr", dateStr);
@@ -250,30 +252,33 @@ public class AddSchedule extends BaseActivity {
         bundle.putString("mUid", mUser.getUid());
 
         intent.putExtras(bundle);
+        lateIntent.putExtras(bundle);
         int id = schedule.getDate().getHour()*60 + schedule.getDate().getMinute();
         // pendingIntent 를 통한 broadcast
         PendingIntent pendingIntent = PendingIntent.getBroadcast(AddSchedule.this, id, intent, 0);
+        PendingIntent latePending = PendingIntent.getBroadcast(AddSchedule.this, 123, lateIntent,0);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             //hour = timePicker.getHour();
             //minute = timePicker.getMinute();
         }
+        Calendar lateCalendar = Calendar.getInstance();
+        lateCalendar.set(year,month-1,day,hour,minute,0);
 
+        int total_time = schedule.getTotal_time();
+        int sumOftime = hour*60 + minute - total_time - 30;
+        hour = sumOftime / 60;
+        minute = sumOftime % 60;
 
         // Calendar Instance
         Calendar calendar = Calendar.getInstance();
+        calendar.set(year,month-1,day,hour,minute,0);
 
-//        calendar.set(Calendar.YEAR,year);
-//        calendar.set(Calendar.MONTH, month-1);
-//        calendar.set(Calendar.DAY_OF_MONTH, day);
-//        calendar.set(Calendar.HOUR_OF_DAY, hour-1); //  한시간 전 실행
-//        calendar.set(Calendar.MINUTE, minute);
-//        calendar.set(Calendar.SECOND, 0);
-//        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.set(year,month-1,day,hour-1,minute,0);
 
         // calendar로 지정한 시간 == RTC_WAKEUP 시, 알람 실행
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        lateAlarm.set(AlarmManager.RTC_WAKEUP, lateCalendar.getTimeInMillis(), latePending);
 
     } // end of regist
 

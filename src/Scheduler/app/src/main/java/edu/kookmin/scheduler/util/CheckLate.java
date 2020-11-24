@@ -3,6 +3,7 @@ package edu.kookmin.scheduler.util;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -24,39 +25,39 @@ public class CheckLate extends BroadcastReceiver {
     private int total_time;
     private String schedule_name;
     private String arrival_location;
+    private String mUid;
 
-    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private FirebaseUser mUser;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        arrival_lat = intent.getExtras().getDouble("arrival_lat");
-        arrival_lng = intent.getExtras().getDouble("arrival_lng");
-        hour = intent.getExtras().getInt("hour");
-        minute = intent.getExtras().getInt("minute");
-        schedule_name = intent.getStringExtra("schedule_name");
-        arrival_location = intent.getStringExtra("arrival_location");
-
+        Bundle bundle = intent.getExtras();
+        arrival_lat = bundle.getDouble("arrival_lat");
+        arrival_lng = bundle.getDouble("arrival_lng");
+        hour = bundle.getInt("hour");
+        minute = bundle.getInt("minute");
+        schedule_name = bundle.getString("schedule_name");
+        arrival_location = bundle.getString("arrival_location");
+        mUid = bundle.getString("mUid");
         gpsTracker = new GpsTracker(context);
         lat = gpsTracker.getLat();
         lng = gpsTracker.getLng();
         Log.d("위도 경도 ", lat.toString() + " " + lng.toString());
-        Log.d("시간체크","hour : "+ hour+" minute : "+minute);
+        Log.d("mUid",mUid);
 
-        ref = database.getReference("User/").child(mUser.getUid()).child("lateCount");
-        ref.addValueEventListener(new ValueEventListener() {
+        ref = database.getReference("User/").child(mUid).child("lateCount");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.e("onDataChanage", "실행");
                 count = snapshot.getValue(int.class);
-                if (isLate(lat, lng, arrival_lat, arrival_lng)) count++;
-                ref.setValue(count);
+                isLate(lat, lng, arrival_lat, arrival_lng);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.e("error",error.toString());
             }
         });
 
@@ -67,10 +68,15 @@ public class CheckLate extends BroadcastReceiver {
 
     } // end of onReceive
 
-    public boolean isLate(Double lat, Double lng, Double arrival_lat, Double arrival_lng) {
+    public void isLate(Double lat, Double lng, Double arrival_lat, Double arrival_lng) {
         // 오차 300m 이내 계산
-        if(Math.abs((lat+lng) - (arrival_lat+arrival_lng)) <= 0.0020000 ) return false;
-        else return true;
+        if(Math.abs((lat+lng) - (arrival_lat+arrival_lng)) <= 0.0020000 ){
+            Log.e("isLate", "false");
+        }
+        else{
+            Log.e("isLate", "true");
+            ref.setValue(++count);
+        }
     }
 
 
