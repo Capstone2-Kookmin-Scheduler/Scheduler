@@ -263,20 +263,14 @@ public class AddSchedule extends BaseActivity {
         // Calendar Instance
         Calendar calendar = Calendar.getInstance();
 
-        /**
-         * TODO : 한시간 전 실행 아님, 약속시간 - 소요시간 - 20분
-         * Todo 날짜별로도 해야됨.
-         */
-        calendar.set(Calendar.YEAR,year);
-        calendar.set(Calendar.MONTH, month);
-        calendar.set(Calendar.DAY_OF_MONTH, day);
-
-        Log.e("날짜","날짜" + year + month + day);
-
-        calendar.set(Calendar.HOUR_OF_DAY, hour-1); //  한시간 전 실행
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
+//        calendar.set(Calendar.YEAR,year);
+//        calendar.set(Calendar.MONTH, month-1);
+//        calendar.set(Calendar.DAY_OF_MONTH, day);
+//        calendar.set(Calendar.HOUR_OF_DAY, hour-1); //  한시간 전 실행
+//        calendar.set(Calendar.MINUTE, minute);
+//        calendar.set(Calendar.SECOND, 0);
+//        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(year,month-1,day,hour-1,minute,0);
 
         // calendar로 지정한 시간 == RTC_WAKEUP 시, 알람 실행
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);

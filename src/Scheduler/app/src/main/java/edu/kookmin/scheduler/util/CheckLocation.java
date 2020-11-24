@@ -54,7 +54,6 @@ public class CheckLocation extends BroadcastReceiver {
     private String arrival_location;
     private String dateStr;
     private String schedule_uid;
-    private Schedule schedule;
 
     private NotificationManager notificationManager;
     private Notification noti;
