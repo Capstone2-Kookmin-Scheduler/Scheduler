@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,6 +27,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -64,6 +66,7 @@ public class CalendarFragment extends Fragment {
     private EventDecorator eventDecorator;
     private ArrayList<CalendarDay> dates = new ArrayList<>();
     private String tempDate;
+    private int lateCount;
     public CalendarFragment() {
         // Required empty public constructor
     }
@@ -84,6 +87,18 @@ public class CalendarFragment extends Fragment {
         if (getArguments() != null) {
             mUid = getArguments().getString("mUid");
         }
+        ref = database.getReference("User/").child(mUid).child("lateCount");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                lateCount = snapshot.getValue(int.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     @Override
@@ -221,7 +236,10 @@ public class CalendarFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), AddSchedule.class);
                 startActivity(intent);
                 break;
-
+            case R.id.reset_lateCount:
+                ref = database.getReference("User/").child(mUid).child("lateCount");
+                ref.setValue(0);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

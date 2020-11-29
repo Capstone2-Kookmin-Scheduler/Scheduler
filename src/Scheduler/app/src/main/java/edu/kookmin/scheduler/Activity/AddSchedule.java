@@ -1,5 +1,6 @@
 package edu.kookmin.scheduler.Activity;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import android.app.AlarmManager;
@@ -25,8 +26,11 @@ import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.odsay.odsayandroidsdk.API;
 import com.odsay.odsayandroidsdk.ODsayData;
 import com.odsay.odsayandroidsdk.ODsayService;
@@ -68,7 +72,7 @@ public class AddSchedule extends BaseActivity {
     private int year, month, day, hour, minute;
     private Schedule schedule  = new Schedule();
     private String schedule_UID;
-    private int count = 0;
+    private int lateCount;
 
     private static int AUTOCOMPLETE_REQUEST_CODE_DEPARTURE = 1;
     private static int AUTOCOMPLETE_REQUEST_CODE_ARRIVAL = 2;
@@ -96,7 +100,18 @@ public class AddSchedule extends BaseActivity {
         search_departure_location = (ImageButton) findViewById(R.id.search_departure_location);
         add_schedule = (Button) findViewById(R.id.add_schedule);
 
+        ref = database.getReference("User/").child(mUser.getUid()).child("lateCount");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                lateCount = snapshot.getValue(int.class);
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         //google Places 초기화
         Places.initialize(getApplicationContext(), getString(R.string.place_api_key));
@@ -139,6 +154,7 @@ public class AddSchedule extends BaseActivity {
             originDate = schedule.getDate();
             Log.e("originDate","월일"+originDate.getMonth() + originDate.getDay());
             Log.e("log", schedule.getUid());
+            Log.e("lateCount",lateCount+"번");
             updateUI(schedule);
         }
 
@@ -264,9 +280,9 @@ public class AddSchedule extends BaseActivity {
         }
         Calendar lateCalendar = Calendar.getInstance();
         lateCalendar.set(year,month-1,day,hour,minute,0);
-
+        Log.e("lateCount",lateCount+"번");
         int total_time = schedule.getTotal_time();
-        int sumOftime = hour*60 + minute - total_time - 30;
+        int sumOftime = hour*60 + minute - total_time - 30 - lateCount*10;
         hour = sumOftime / 60;
         minute = sumOftime % 60;
 

@@ -16,8 +16,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
@@ -36,6 +39,7 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
         this.list = list;
     }
     private Context mContext;
+    private int lateCount;
 
     @NonNull
     @Override
@@ -69,6 +73,7 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
             textView1 = itemView.findViewById(R.id.textView1);
             textView2 = itemView.findViewById(R.id.textView2);
             textView3 = itemView.findViewById(R.id.textView3);
+
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -106,6 +111,7 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
                                     case 0: // 수정
                                         Intent intent = new Intent(view.getContext(), AddSchedule.class);
                                         intent.putExtra("schedule", schedule);
+//                                        intent.putExtra("lateCount",lateCount);
                                         view.getContext().startActivity(intent);
 
                                         break;
