@@ -7,14 +7,19 @@
 
 알람을 클릭하면 현재 위치에서부터 대중교통의 첫 시작점 (버스정류장, 지하철역)까지 도보거리를 지도상에 띄워줍니다. 
 
-(![img1](https://user-images.githubusercontent.com/38371711/116515007-b49cb980-a906-11eb-8ebd-3fb0e1804837.PNG))
+![img1](https://user-images.githubusercontent.com/38371711/116515007-b49cb980-a906-11eb-8ebd-3fb0e1804837.PNG)
 
 또한, 탑승/환승해야할 대중교통 리스트를 보여줍니다.
 
 ## 2. 개발환경 
 
+<pre>
 Android, JAVA
 DB : FirebaseRealtime Database
 API : googlePlace, OdySayLab, 공공데이터 포털 API, Mapbox, Google Direction
+
+![img3](https://user-images.githubusercontent.com/38371711/116515013-b5355000-a906-11eb-93cb-fc314cc6445b.PNG)
+</pre>
+
 
 ## 3. 
