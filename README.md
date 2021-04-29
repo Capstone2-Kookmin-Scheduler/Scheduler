@@ -17,9 +17,9 @@
 Android, JAVA
 DB : FirebaseRealtime Database
 API : googlePlace, OdySayLab, 공공데이터 포털 API, Mapbox, Google Direction
-
-![img3](https://user-images.githubusercontent.com/38371711/116515013-b5355000-a906-11eb-93cb-fc314cc6445b.PNG)
 </pre>
+![img3](https://user-images.githubusercontent.com/38371711/116515013-b5355000-a906-11eb-93cb-fc314cc6445b.PNG)
+
 
 
 ## 3. 
