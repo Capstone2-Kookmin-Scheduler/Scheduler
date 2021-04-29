@@ -37,3 +37,7 @@ DB 구조
 </pre>
 ![img8](https://user-images.githubusercontent.com/38371711/116515024-b8c8d700-a906-11eb-9b1e-8495dd83b358.PNG)
 ![img9](https://user-images.githubusercontent.com/38371711/116515025-b9616d80-a906-11eb-8b35-ee55eb889934.PNG)
+<pre>
+3. 정류장 까지 도보 경로 표시
+</pre>
+![img6](https://user-images.githubusercontent.com/38371711/116515018-b797aa00-a906-11eb-839d-0aec419a3889.PNG)
