@@ -20,6 +20,10 @@ API : googlePlace, OdySayLab, 공공데이터 포털 API, Mapbox, Google Directi
 </pre>
 ![img3](https://user-images.githubusercontent.com/38371711/116515013-b5355000-a906-11eb-93cb-fc314cc6445b.PNG)
 
+<pre>
+DB 구조
+</pre>
 
+![img7](https://user-images.githubusercontent.com/38371711/116515021-b8304080-a906-11eb-850f-0457d18d8b8b.PNG)
 
 ## 3. 
