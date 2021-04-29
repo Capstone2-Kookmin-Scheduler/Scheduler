@@ -26,4 +26,14 @@ DB 구조
 
 ![img7](https://user-images.githubusercontent.com/38371711/116515021-b8304080-a906-11eb-850f-0457d18d8b8b.PNG)
 
-## 3. 
+## 3. 실행 화면 
+
+<pre>
+1. 회원가입 및 로그인 화면
+</pre>
+![img4](https://user-images.githubusercontent.com/38371711/116515015-b5cde680-a906-11eb-9311-c8febccc4c5f.PNG)
+<pre>
+2. 일정 추가 및 관리 
+</pre>
+![img8](https://user-images.githubusercontent.com/38371711/116515024-b8c8d700-a906-11eb-9b1e-8495dd83b358.PNG)
+![img9](https://user-images.githubusercontent.com/38371711/116515025-b9616d80-a906-11eb-8b35-ee55eb889934.PNG)
