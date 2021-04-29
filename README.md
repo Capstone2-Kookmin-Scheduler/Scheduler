@@ -26,7 +26,10 @@ DB 구조
 
 ![img7](https://user-images.githubusercontent.com/38371711/116515021-b8304080-a906-11eb-850f-0457d18d8b8b.PNG)
 
-## 3. 실행 화면 
+## 3. 작동 방식
+![img5](https://user-images.githubusercontent.com/38371711/116515017-b6ff1380-a906-11eb-870a-e5677d2f7222.PNG)
+
+## 4. 실행 화면 
 
 <pre>
 1. 회원가입 및 로그인 화면
