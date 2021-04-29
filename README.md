@@ -7,7 +7,7 @@
 
 알람을 클릭하면 현재 위치에서부터 대중교통의 첫 시작점 (버스정류장, 지하철역)까지 도보거리를 지도상에 띄워줍니다. 
 
-(https://github.com/Capstone2-Kookmin-Scheduler/Scheduler/blob/master/src/Scheduler/img/img1.PNG)
+(![img1](https://user-images.githubusercontent.com/38371711/116515007-b49cb980-a906-11eb-8ebd-3fb0e1804837.PNG))
 
 또한, 탑승/환승해야할 대중교통 리스트를 보여줍니다.
 
